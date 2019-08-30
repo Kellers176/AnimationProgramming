@@ -34,9 +34,16 @@
 //	6) transform texture coordinate attribute and copy to varying
 
 layout (location = 0) in vec4 aPosition;
+layout (location = 8) in vec4 texCoord;
+uniform mat4 uMVP; //1
+uniform mat4 uAtlas; //4
+
+out vec4 temp; //5
 
 void main()
 {
+	temp = texCoord * uAtlas; //6
+
 	// DUMMY OUTPUT: directly assign input position to output position
-	gl_Position = aPosition;
+	gl_Position = aPosition * uMVP; //2
 }

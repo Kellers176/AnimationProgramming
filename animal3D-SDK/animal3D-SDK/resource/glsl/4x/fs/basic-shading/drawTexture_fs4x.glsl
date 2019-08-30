@@ -33,8 +33,14 @@
 
 out layout (location = 0) vec4 rtFragColor;
 
+uniform sampler2D uTex_dm; //2
+
+in vec4 temp;//1
+
 void main()
 {
+	vec4 temp2 = texture2D(uTex_dm, temp.xy);//3
+
 	// DUMMY OUTPUT: all fragments are OPAQUE GREEN
-	rtFragColor = vec4(0.0, 1.0, 0.0, 1.0);
+	rtFragColor = vec4(temp2.xyz, 1); //4
 }
