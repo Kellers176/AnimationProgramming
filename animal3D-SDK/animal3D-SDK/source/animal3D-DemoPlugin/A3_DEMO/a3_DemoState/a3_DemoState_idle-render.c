@@ -419,8 +419,8 @@ void a3demo_render_main(const a3_DemoState *demoState,
 
 					// ****TO-DO: replace above texture activation with 
 					//	sending atlas transform uniform for the current object
-					a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uAtlas, 1, currentSceneObject->modelMat.mm);
-
+					a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uAtlas, 1, atlasTransformPtr[k].mm);
+					
 					// draw
 					currentDrawable = drawable[k];
 					a3vertexDrawableActivateAndRender(currentDrawable);
