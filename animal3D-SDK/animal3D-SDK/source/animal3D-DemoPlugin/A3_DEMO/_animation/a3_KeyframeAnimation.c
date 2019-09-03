@@ -77,8 +77,12 @@ a3i32 a3keyframeInit(a3_Keyframe* keyframe_out, const a3real duration, const a3u
 {
 	if (keyframe_out)
 	{
-		// ****TO-DO
+		// ****TO-DO //
 		// set keyframe data
+		keyframe_out->duration = a3maximum(duration, a3real_zero);
+		keyframe_out->durationInv = a3recipsafe(keyframe_out->duration);
+
+		keyframe_out->value = value_x;
 
 		// done
 		return keyframe_out->index;
@@ -134,9 +138,12 @@ a3i32 a3clipInit(a3_Clip* clip_out, const a3byte clipName[a3keyframeAnimation_na
 		strncpy(clip_out->name, A3_CLIP_SEARCHNAME, a3keyframeAnimation_nameLenMax);
 		clip_out->name[a3keyframeAnimation_nameLenMax - 1] = 0;
 
-		// ****TO-DO
+		// ****TO-DO //
 		// calculate total frames
+		clip_out->firstKeyframeIndex = firstKeyframeIndex;
+		clip_out->finalKeyframeIndex = finalKeyframeIndex;
 
+		clip_out->keyframeCount = finalKeyframeIndex - firstKeyframeIndex + 1;
 
 		// set keyframe list from pool
 		clip_out->keyframeListBasePtr_pool = keyframePool->keyframe;
@@ -145,7 +152,7 @@ a3i32 a3clipInit(a3_Clip* clip_out, const a3byte clipName[a3keyframeAnimation_na
 		a3clipCalculateDuration(clip_out);
 
 		// done
-	//	return clip_out->keyframeCount;	// something meaningful wow
+		return clip_out->keyframeCount;	// something meaningful wow
 	}
 	return -1;
 }

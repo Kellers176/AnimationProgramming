@@ -30,7 +30,8 @@
 //-----------------------------------------------------------------------------
 
 // initialize clip controller
-a3i32 a3clipControllerInit(a3_ClipController* clipCtrl_out, const a3byte ctrlName[a3keyframeAnimation_nameLenMax], const a3_ClipPool* clipPool, const a3ui32 clipIndex_pool, const a3_ClipPlayDirection forwardClipEndAction, const a3_ClipPlayDirection reverseClipEndAction, const a3_ClipPlayDirection initialPlayDirection)
+a3i32 a3clipControllerInit(a3_ClipController* clipCtrl_out, const a3byte ctrlName[a3keyframeAnimation_nameLenMax], const a3_ClipPool* clipPool, 
+	const a3ui32 clipIndex_pool, const a3_ClipPlayDirection forwardClipEndAction, const a3_ClipPlayDirection reverseClipEndAction, const a3_ClipPlayDirection initialPlayDirection)
 {
 	if (clipCtrl_out && clipPool && clipPool->clip && clipIndex_pool < clipPool->count)
 	{
@@ -40,7 +41,8 @@ a3i32 a3clipControllerInit(a3_ClipController* clipCtrl_out, const a3byte ctrlNam
 
 		// ****TO-DO
 		// set all members
-
+		clipCtrl_out->keyframeTime = clipCtrl_out->keyframeParam = a3real_zero;
+		clipCtrl_out->playDirection = initialPlayDirection;
 
 		// set clip list from pool
 		a3clipControllerSetClip(clipCtrl_out, clipPool, clipIndex_pool);

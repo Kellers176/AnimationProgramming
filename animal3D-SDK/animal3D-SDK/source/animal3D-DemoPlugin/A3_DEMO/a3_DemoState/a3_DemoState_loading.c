@@ -855,8 +855,7 @@ void a3demo_loadAnimation(a3_DemoState *demoState)
 	//	are then used to calculate a set of transforms
 	a3textureAtlasSetTexture(demoState->testSpriteSheetAtlas, demoState->tex_sprite_test);
 	a3textureAtlasAllocateEvenCells(demoState->testSpriteSheetAtlas, testSpriteSheetColumns, testSpriteSheetRows);
-	demoState->testSpriteSheetAtlasTransformList = (a3mat4*)malloc(
-		demoState->testSpriteSheetAtlas->numCells * sizeof(a3mat4));
+	demoState->testSpriteSheetAtlasTransformList = (a3mat4*)malloc(demoState->testSpriteSheetAtlas->numCells * sizeof(a3mat4));
 	for (i = 0; i < demoState->testSpriteSheetAtlas->numCells; ++i)
 		a3demo_setAtlasTransform_internal(demoState->testSpriteSheetAtlasTransformList[i].m,
 			demoState->testSpriteSheetAtlas->texture->width, demoState->testSpriteSheetAtlas->texture->height,

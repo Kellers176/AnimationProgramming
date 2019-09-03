@@ -33,8 +33,8 @@
 inline a3i32 a3clipController_internalSetKeyframe(a3_ClipController* clipCtrl, const a3ui32 keyframeIndex_clip)
 {
 	// ****TO-DO: uncomment
-//	clipCtrl->keyframeIndex_clip = keyframeIndex_clip;
-//	clipCtrl->keyframePtr = clipCtrl->clipPtr->keyframeListBasePtr_pool + clipCtrl->keyframeIndex_clip;
+	clipCtrl->keyframeIndex_clip = keyframeIndex_clip;
+	clipCtrl->keyframePtr = clipCtrl->clipPtr->keyframeListBasePtr_pool + clipCtrl->keyframeIndex_clip;
 	return keyframeIndex_clip;
 }
 
@@ -48,13 +48,30 @@ inline a3i32 a3clipControllerUpdate(a3_ClipController* clipCtrl, const a3real dt
 	{
 		// ****TO-DO: uncomment
 		// flag to continue solving
-	//	a3boolean solving = 1;
+		a3boolean solving = 1;
 
-		// ****TO-DO
-		// IMPLEMENT ME
+		//Step 1) Increment keyframe time based on playback direction (add or subtract dt)
+		clipCtrl->keyframeTime += dt * (a3real)clipCtrl->playDirection;
 
+		//iterate until done
+		while (solving)
+		{
+			// ****TO-DO
+			// IMPLEMENT ME
+
+
+			//get current duration of the keyframe
+			//get current controller duration
+			//see if time is greater than controller duration. 
+			//If true: pass the value of keyframe index clip pass it into a3clipController_internalSetKeyframe (above)
+			//if not: nothing (?)
+			//then stop solving
+		}
+
+		//Update parameter by normalizing
+		clipCtrl->keyframeParam = clipCtrl->keyframeTime * clipCtrl->keyframePtr->durationInv;
 	}
-	return -1;
+	return clipCtrl->keyframeIndex_clip;
 }
 
 // set playback direction
@@ -107,7 +124,7 @@ inline a3i32 a3clipControllerSetClip(a3_ClipController* clipCtrl, const a3_ClipP
 
 		// ****TO-DO: 
 		// call internal set function with first keyframe in clip as argument
-
+		a3clipController_internalSetKeyframe(clipCtrl, clipCtrl->clipPtr->firstKeyframeIndex);
 
 		// done, return clip index
 		return clipIndex_pool;

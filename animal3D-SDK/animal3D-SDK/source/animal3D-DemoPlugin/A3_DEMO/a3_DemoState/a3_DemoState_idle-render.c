@@ -432,7 +432,9 @@ void a3demo_render_main(const a3_DemoState *demoState,
 
 						// ****TO-DO
 						// send atlas transform based on current sprite cell
-
+						a3shaderUniformSendFloatMat(a3unif_mat4, 0,
+							currentDemoProgram->uAtlas, 1,
+							demoState->testSpriteSheetAtlasTransformList[demoState->testSpriteSheetClipController->keyframePtr->value].mm);
 					}
 					else
 					{
