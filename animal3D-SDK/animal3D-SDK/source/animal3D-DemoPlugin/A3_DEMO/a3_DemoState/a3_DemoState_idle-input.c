@@ -109,18 +109,24 @@ void a3demo_input_main(a3_DemoState *demoState, a3f64 dt)
 		// test sprite controller
 		if (a3keyboardIsPressed(demoState->keyboard, a3key_upArrow))
 		{
-			if (demoState->testSpriteSheetClipController->clipPtr->index == demoState->testSpriteSheetClipPool[0].count - 1)
+			//if (demoState->testSpriteSheetClipController->clipPtr->index == demoState->testSpriteSheetClipPool[0].count - 1)
+			if (demoState->testSpriteSheetClipController->clipPtr[demoState->testSpriteSheetClipController->clipIndex_pool].index == demoState->testSpriteSheetClipPool[0].count - 1)
 			{
 				demoState->testSpriteSheetClipController->clipIndex_pool = 0;
-				demoState->testSpriteSheetClipController->clipListBasePtr_pool[demoState->testSpriteSheetClipController->clipIndex_pool];
+				demoState->testSpriteSheetClipController->clipListBasePtr_pool[0];
 			}
 			else
-				demoState->testSpriteSheetClipController->clipIndex_pool = demoState->testSpriteSheetClipPool[0].clip[1 + demoState->testSpriteSheetClipController->clipPtr->index].index;
+			{
+				//Where we are in the pool
+				a3ui32 dumbInt = demoState->testSpriteSheetClipController->clipIndex_pool++;
 
-			//if (demoState->testSpriteSheetClipController[0].keyframeIndex_clip < 7)
-			//	demoState->testSpriteSheetClipController[0].keyframeIndex_clip++;
-			//else
-			//	demoState->testSpriteSheetClipController[0].keyframeIndex_clip = 0;
+				demoState->testSpriteSheetClipController->clipPtr = demoState->testSpriteSheetClipPool->clip + 1;
+				//demoState->testSpriteSheetClipController->clipPtr[0] = demoState->testSpriteSheetClipController->clipListBasePtr_pool[demoState->testSpriteSheetClipController->clipIndex_pool];
+				//demoState->testSpriteSheetClipController->clipPtr = demoState->testSpriteSheetClipController->clipPtr[demoState->testSpriteSheetClipController->clipIndex_pool];
+				//incriment clipPtr
+				//demoState->testSpriteSheetClipController->clipPtr = demoState->testSpriteSheetClipController->clipListBasePtr_pool[dumbInt].;
+			}
+
 			if (true)
 			{
 
