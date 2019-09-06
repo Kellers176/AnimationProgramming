@@ -107,7 +107,37 @@ void a3demo_input_main(a3_DemoState *demoState, a3f64 dt)
 
 		// ****TO-DO
 		// test sprite controller
+		if (a3keyboardIsPressed(demoState->keyboard, a3key_upArrow))
+		{
+			if (demoState->testSpriteSheetClipController->clipPtr->index == demoState->testSpriteSheetClipPool[0].count - 1)
+			{
+				demoState->testSpriteSheetClipController->clipIndex_pool = 0;
+				demoState->testSpriteSheetClipController->clipListBasePtr_pool[demoState->testSpriteSheetClipController->clipIndex_pool];
+			}
+			else
+				demoState->testSpriteSheetClipController->clipIndex_pool = demoState->testSpriteSheetClipPool[0].clip[1 + demoState->testSpriteSheetClipController->clipPtr->index].index;
 
+			//if (demoState->testSpriteSheetClipController[0].keyframeIndex_clip < 7)
+			//	demoState->testSpriteSheetClipController[0].keyframeIndex_clip++;
+			//else
+			//	demoState->testSpriteSheetClipController[0].keyframeIndex_clip = 0;
+			if (true)
+			{
+
+			}
+		}
+		if (a3keyboardIsPressed(demoState->keyboard, a3key_downArrow))
+		{
+			demoState->testSpriteSheetClipController[0].playDirection = 0;
+		}
+		if (a3keyboardIsPressed(demoState->keyboard, a3key_leftArrow))
+		{
+			demoState->testSpriteSheetClipController[0].playDirection = -1;
+		}
+		if (a3keyboardIsPressed(demoState->keyboard, a3key_rightArrow))
+		{
+			demoState->testSpriteSheetClipController[0].playDirection = 1;
+		}
 	}
 }
 

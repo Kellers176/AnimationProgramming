@@ -61,11 +61,22 @@ inline a3i32 a3clipControllerUpdate(a3_ClipController* clipCtrl, const a3real dt
 
 
 			//get current duration of the keyframe
+			a3real currentKeyframeDuration = clipCtrl->keyframePtr->duration;
+
 			//get current controller duration
+			a3real currentControllerDuration = clipCtrl->keyframeTime;//Or Param
+
 			//see if time is greater than controller duration. 
-			//If true: pass the value of keyframe index clip pass it into a3clipController_internalSetKeyframe (above)
-			//if not: nothing (?)
+			if (currentControllerDuration >= currentKeyframeDuration)
+			{
+				//If true: pass the value of keyframe index clip pass it into a3clipController_internalSetKeyframe (above)
+				a3clipController_internalSetKeyframe(clipCtrl, clipCtrl->keyframeIndex_clip);
+			}
+			//else //if not: nothing (?)
+				//
+
 			//then stop solving
+			solving = false;
 		}
 
 		//Update parameter by normalizing
