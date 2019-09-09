@@ -107,41 +107,41 @@ void a3demo_input_main(a3_DemoState *demoState, a3f64 dt)
 		// test sprite controller
 		if (a3keyboardIsPressed(demoState->keyboard, a3key_upArrow))
 		{
-
-			//if (demoState->testSpriteSheetClipController->clipPtr->index == demoState->testSpriteSheetClipPool[0].count - 1)
-			if (demoState->testSpriteSheetClipController->clipIndex_pool >= demoState->testSpriteSheetClipPool[0].count - 1)
-			{
-				demoState->testSpriteSheetClipController->clipIndex_pool = 0;
-				demoState->testSpriteSheetClipController->clipListBasePtr_pool[0];
-
-				//demoState->testSpriteSheetClipPool->clip = &demoState->testSpriteSheetClipPool->clip[0];
-				demoState->testSpriteSheetClipController->clipPtr = &demoState->testSpriteSheetClipPool->clip[0];
-			}
-			else
-			{
-				//Where we are in the pool
-				//a3ui32 dumbInt = demoState->testSpriteSheetClipController->clipIndex_pool++;
-
-				demoState->testSpriteSheetClipController->clipIndex_pool++;
-
-				a3clipControllerSetClip(demoState->testSpriteSheetClipController, demoState->testSpriteSheetClipPool, demoState->testSpriteSheetClipController->clipIndex_pool);
-
-				//demoState->testSpriteSheetClipController->clipPtr = &demoState->testSpriteSheetClipPool->clip[demoState->testSpriteSheetClipController->clipIndex_pool];
-
-				//demoState->testSpriteSheetClipController->clipPtr = demoState->testSpriteSheetClipPool->clip + 1;
-				//
-				//demoState->testSpriteSheetClipPool->clip++;// = &demoState->testSpriteSheetClipPool->clip[demoState->testSpriteSheetClipPool->count];
-				//demoState->testSpriteSheetClipPool->clip = &demoState->testSpriteSheetClipPool->clip[demoState->testSpriteSheetClipPool->count];
-				//demoState->testSpriteSheetClipController->clipPtr[0] = demoState->testSpriteSheetClipController->clipListBasePtr_pool[demoState->testSpriteSheetClipController->clipIndex_pool];
-				//demoState->testSpriteSheetClipController->clipPtr = demoState->testSpriteSheetClipController->clipPtr[demoState->testSpriteSheetClipController->clipIndex_pool];
-				//incriment clipPtr
-				//demoState->testSpriteSheetClipController->clipPtr = demoState->testSpriteSheetClipController->clipListBasePtr_pool[dumbInt].;
-			}
-
-			if (true)
-			{
-
-			}
+			a3clipControllerSetClip(demoState->testSpriteSheetClipController, demoState->testSpriteSheetClipPool, (demoState->testSpriteSheetClipController->clipIndex_pool + 1) % demoState->testSpriteSheetClipPool->count);
+//			//if (demoState->testSpriteSheetClipController->clipPtr->index == demoState->testSpriteSheetClipPool[0].count - 1)
+//			if (demoState->testSpriteSheetClipController->clipIndex_pool >= demoState->testSpriteSheetClipPool[0].count - 1)
+//			{
+//				demoState->testSpriteSheetClipController->clipIndex_pool = 0;
+//				demoState->testSpriteSheetClipController->clipListBasePtr_pool[0];
+//
+//				//demoState->testSpriteSheetClipPool->clip = &demoState->testSpriteSheetClipPool->clip[0];
+//				demoState->testSpriteSheetClipController->clipPtr = &demoState->testSpriteSheetClipPool->clip[0];
+//			}
+//			else
+//			{
+//				//Where we are in the pool
+//				//a3ui32 dumbInt = demoState->testSpriteSheetClipController->clipIndex_pool++;
+//
+//				demoState->testSpriteSheetClipController->clipIndex_pool++;
+//
+//				a3clipControllerSetClip(demoState->testSpriteSheetClipController, demoState->testSpriteSheetClipPool, demoState->testSpriteSheetClipController->clipIndex_pool);
+//
+//				//demoState->testSpriteSheetClipController->clipPtr = &demoState->testSpriteSheetClipPool->clip[demoState->testSpriteSheetClipController->clipIndex_pool];
+//
+//				//demoState->testSpriteSheetClipController->clipPtr = demoState->testSpriteSheetClipPool->clip + 1;
+//				//
+//				//demoState->testSpriteSheetClipPool->clip++;// = &demoState->testSpriteSheetClipPool->clip[demoState->testSpriteSheetClipPool->count];
+//				//demoState->testSpriteSheetClipPool->clip = &demoState->testSpriteSheetClipPool->clip[demoState->testSpriteSheetClipPool->count];
+//				//demoState->testSpriteSheetClipController->clipPtr[0] = demoState->testSpriteSheetClipController->clipListBasePtr_pool[demoState->testSpriteSheetClipController->clipIndex_pool];
+//				//demoState->testSpriteSheetClipController->clipPtr = demoState->testSpriteSheetClipController->clipPtr[demoState->testSpriteSheetClipController->clipIndex_pool];
+//				//incriment clipPtr
+//				//demoState->testSpriteSheetClipController->clipPtr = demoState->testSpriteSheetClipController->clipListBasePtr_pool[dumbInt].;
+//			}
+//
+//			if (true)
+//			{
+//
+//			}
 		}
 		if (a3keyboardIsPressed(demoState->keyboard, a3key_downArrow))
 		{
