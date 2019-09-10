@@ -61,14 +61,16 @@ extern "C"
 
 
 	// single sample of some function in time
-//	union a3_Sample
-//	{
+	union a3_Sample
+	{
 		// ****TO-DO
 		// fundamentally a sample is a 2D vector: 
 		//	independent axis is time (t), dependent axis is value (x)
 		//	value is evaluated or provided as a function of time: x = f(t)
+		a3vec2 sample;
+		struct { a3real time_t, value_x;};
 
-//	};
+	};
 
 
 	// description of single keyframe
@@ -84,7 +86,15 @@ extern "C"
 
 		// ****TO-DO //
 		// temporary value can just be an index mapping to some data
-		a3ui32 value;
+//		a3ui32 value;
+
+		a3_Sample keySample;
+
+		union {
+			struct { a3_Sample keyHandle_delta, revHandleDelta; };
+			struct { a3real keyHandle_dt, keyHandle_dx, revHandle_dt, revHandle_dx; };
+		};
+
 	};
 
 	// pool of keyframe descriptors
