@@ -86,15 +86,15 @@ extern "C"
 
 		// ****TO-DO //
 		// temporary value can just be an index mapping to some data
-//		a3ui32 value;
+		a3ui32 value;
 
-		a3_Sample keySample;
-
-		union {
-			struct { a3_Sample keyHandle_delta, revHandleDelta; };
-			struct { a3real keyHandle_dt, keyHandle_dx, revHandle_dt, revHandle_dx; };
-		};
-
+//		a3_Sample keySample;
+//
+//		union {
+//			struct { a3_Sample keyHandle_delta, revHandleDelta; };
+//			struct { a3real keyHandle_dt, keyHandle_dx, revHandle_dt, revHandle_dx; };
+//		};
+//
 	};
 
 	// pool of keyframe descriptors
