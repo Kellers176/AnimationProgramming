@@ -1,0 +1,40 @@
+#Object Name
+#	Curve Name
+#	Values Comma Seperated
+#	Keyframes Comma Seperated
+
+pSphere1
+	pSphere1_translateX
+		Keyframe: 1
+		Value: 0
+
+		Keyframe: 14
+		Value: -0.5523052955
+
+		Keyframe: 31
+		Value: 10.79952974
+
+	pSphere1_translateY
+		Keyframe: 1
+		Value: 0
+
+		Keyframe: 31
+		Value: 6.44541841
+
+	pSphere1_translateZ
+		Keyframe: 1
+		Value: 0
+
+		Keyframe: 14
+		Value: -5.853878551
+
+		Keyframe: 31
+		Value: 8.912106403
+
+	pSphere1_scaleY
+		Keyframe: 1
+		Value: 1
+
+		Keyframe: 31
+		Value: 1.500661654
+
