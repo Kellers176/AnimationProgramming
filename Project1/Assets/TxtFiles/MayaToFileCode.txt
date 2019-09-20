@@ -1,18 +1,27 @@
 {
-// construct the full path to a file
-$filename = (`internalVar -userTmpDir` + "/../../../Desktop/HopeThisWorks.txt");
-
-// open the file for writing
-$file = `fopen $filename "w"`;
+//Some lines of code taken from:
+//https://nccastaff.bournemouth.ac.uk/jmacey/RobTheBloke/www/mel/#1    
 
 // get the connections and connected nodes, get selected object
 string $selectedObjs[];
 $selectedObjs = `ls -sl`;
 string $node = $selectedObjs[0];
 
+// construct the full path to a file
+$filename = (`internalVar -userTmpDir` + "/../../../Desktop/"+$node+"_KeyframeOutput.txt");
+
+// open the file for writing
+$file = `fopen $filename "w"`;
+
 //Get all listConnections and add to array
 $src_a = `listConnections -s true -d false -c true $node`;
 $src_n = `listConnections -s true -d false $node`;
+
+//Output comments
+fprint $file ("#Object Name\n");
+fprint $file ("#\tCurve Name\n");
+fprint $file ("#\tValues Comma Seperated\n");
+fprint $file ("#\tKeyframes Comma Seperated\n\n");
 
 //prints the name of the node
 fprint $file ($node+"\n");
@@ -34,13 +43,16 @@ for($i=0;$i<size($src_n);$i++) {
       $type=="animCurveTU") 
         {
           //Name of the curve
-          fprint $file ("\t"+$src_a[$j+1]+"\n");
+          fprint $file ("\t"+$src_a[$j+1]);
+          
+          //New line for values
+          fprint $file ("\n\t\t");
           
           //How many keyframes are there?
           int $amountOfKeyframes = `keyframe -query -keyframeCount`;
           
-          //Go through all keyframes
-          for($q=0;$q<$amountOfKeyframes;$q++)
+            //Output values
+            for($q=0;$q<$amountOfKeyframes;$q++)
           {         
               //Gets the time of the keyframes in frames
               float $allKeyframeFrames[] = `keyframe -index $q -query $src_a[$j+1]`;
@@ -48,17 +60,40 @@ for($i=0;$i<size($src_n);$i++) {
               //Goes through each keyframe time
               for($p=0;$p<size($allKeyframeFrames);$p++)
                 {     
-                  //prints the current keyframe to a file     
-                  fprint $file ("\t\tKeyframe: " + $allKeyframeFrames[$p] + "\n");                  
-                  
                   //Get all values at the keyframe
-                  float $yeppers[] = `keyframe -t $allKeyframeFrames[$p] -q -eval $node`;
-                  
-                  //prints the value at the keyframe for the current curve
-                  fprint $file ("\t\tValue: " + $yeppers[$i] + "\n\n"); 
+                      float $yeppers[] = `keyframe -t $allKeyframeFrames[$p] -q -eval $node`;
+                      
+                      //if last value, don't print a comma
+                      if ($p == size($allKeyframeFrames))
+                      {
+                          //prints the value at the keyframe for the current curve
+                          fprint $file ($yeppers[$i]);
+                      }
+                      else
+                          fprint $file ($yeppers[$i] + ", "); 
                 }
-            }   
+            } 
+          
+            //New line for keyframes  
+            fprint $file ("\n\t\t");
+            
+            //Output keyframes values
+            //Go through all keyframes
+            for($q=0;$q<$amountOfKeyframes;$q++)
+            {         
+              //Gets the time of the keyframes in frames
+              float $allKeyframeFrames[] = `keyframe -index $q -query $src_a[$j+1]`;
+              
+              //fprint $file ("\t\tKeyframes: ");
+              //Goes through each keyframe time
+              for($p=0;$p<size($allKeyframeFrames);$p++)
+                {     
+                  //prints the current keyframe to a file     
+                  fprint $file ($allKeyframeFrames[$p] + ", ");
+                }
+            }     
         }
+        fprint $file ("\n\n");
     }
 
 // close the file
