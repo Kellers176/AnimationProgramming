@@ -62,7 +62,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\ObjectInfo.cs" />
+    <Compile Include="Assets\Scripts\ParseFile.cs" />
     <Compile Include="Assets\Scripts\TextHandler.cs" />
+    <None Include="Assets\TxtFiles\pSphere1_KeyframeOutput.txt" />
+    <None Include="Assets\TxtFiles\MayaToFileCode.txt" />
     <None Include="Assets\TxtFiles\GraphInfo.txt" />
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>C:/Users/Kelly.Herstine/Desktop/ahhh/Project1/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
