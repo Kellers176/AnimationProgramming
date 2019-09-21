@@ -20,8 +20,10 @@ public class ParseFile : MonoBehaviour
     ObjectInformation[,] ObjectHolder;
     string text = " ";
     string line = " ";
+    int lineNumber;
 
-    bool channelNameBool;
+    bool isChannelName;
+    bool isValueName;
     // Start is called before the first frame update
     void Start()
     {
@@ -38,7 +40,8 @@ public class ParseFile : MonoBehaviour
         temp.channelName = "";
         temp.value = 0;
         temp.keyFrame = 0;
-
+        int value;
+        lineNumber = 0;
 
         while (text != null)
         {
@@ -57,24 +60,51 @@ public class ParseFile : MonoBehaviour
                     temp.keyFrame = 0;
                     if (text[i] == 'p')
                     {
-                        channelNameBool = true;
+                        isChannelName = true;
                     }
-                    if(channelNameBool == true)
+                    else
+                    {
+                        lineNumber++;
+                    }
+                    if(isChannelName)
                     {
                         tempS += text[i];
+                    }
+                    else if(lineNumber == 1)
+                    {
+                        isValueName = true;
+                    }
+                    if(isValueName)
+                    {
+                        string[] values = text.Split(',');
+                        int[] integerValues = new int[values.Length];
+                        for (int n = 0; n < values.Length; n++)
+                        {
+                            integerValues[n] = int.Parse(values[n]);
+                            Debug.Log(integerValues);
+                        }
                     }
                 }
                 //set the channel name from the temp string
                 temp.channelName = tempS;
-                channelNameBool = false;
+                if(isChannelName)
+                {
+                    isChannelName = false;
+                    
+                }
+                else if(isValueName)
+                {
+                    isValueName = false;
+                }
+                
                 tempS = "";
 
-                //read out the value for each channel name
+                //set and read out the value for each channel name
                 for (int i = 0; i < ColumnLength; i++)
                 {
+                    ObjectHolder[i, 0] = temp;
                     for (int j = 0; j < RowHeight; j++)
                     {
-                        ObjectHolder[i, j] = temp;
                         Debug.Log("Channel Name: " + ObjectHolder[i, 0].channelName);
                         //Debug.Log("Value: " + ObjectHolder[i, 1].value);
                         //Debug.Log("Keyframe: " + ObjectHolder[i, 2].keyFrame);
