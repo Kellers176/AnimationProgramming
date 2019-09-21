@@ -62,7 +62,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\ObjectInfo.cs" />
     <Compile Include="Assets\Scripts\ParseFile.cs" />
     <Compile Include="Assets\Scripts\TextHandler.cs" />
     <None Include="Assets\TxtFiles\pSphere1_KeyframeOutput.txt" />
