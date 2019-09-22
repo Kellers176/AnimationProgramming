@@ -9,8 +9,8 @@ public class ParseFile : MonoBehaviour
     {
         //variables
         public string channelName;
-        public int value;
-        public int keyFrame;
+        public float value;
+        public float keyFrame;
 
     }
     int ColumnLength;
@@ -52,36 +52,36 @@ public class ParseFile : MonoBehaviour
                 Debug.Log("comment");
             else
             {
+                if (text[0] == 'p')
+                {
+                    isChannelName = true;
+                }
                 //for every char in the line
                 for (int i = 0; i < text.Length; i++)
                 {
                     temp.channelName = "";
                     temp.value = 0;
                     temp.keyFrame = 0;
-                    if (text[i] == 'p')
-                    {
-                        isChannelName = true;
-                    }
-                    else
-                    {
-                        lineNumber++;
-                    }
                     if(isChannelName)
                     {
                         tempS += text[i];
                     }
-                    else if(lineNumber == 1)
-                    {
-                        isValueName = true;
-                    }
-                    if(isValueName)
+ //                   else if(lineNumber == 1)
+ //                   {
+ //                       isValueName = true;
+ //                   }
+                    else
                     {
                         string[] values = text.Split(',');
-                        int[] integerValues = new int[values.Length];
+                        float[] floatValues = new float[values.Length];
                         for (int n = 0; n < values.Length; n++)
                         {
-                            integerValues[n] = int.Parse(values[n]);
-                            Debug.Log(integerValues);
+                            //Debug.Log(values[i]);
+                            if(float.TryParse((values[n]), out float num))
+                            {
+                                floatValues[n] = float.Parse((values[n]));
+                                Debug.Log(floatValues[n]);
+                            }
                         }
                     }
                 }
@@ -90,13 +90,14 @@ public class ParseFile : MonoBehaviour
                 if(isChannelName)
                 {
                     isChannelName = false;
-                    
+
                 }
                 else if(isValueName)
                 {
                     isValueName = false;
                 }
                 
+                lineNumber++;
                 tempS = "";
 
                 //set and read out the value for each channel name
