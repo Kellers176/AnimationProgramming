@@ -3,49 +3,58 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 
-public struct ObjectInformation
+
+//public struct Sample<valueType, keyframeType>
+//{
+//    valueType value;
+//    keyframeType keyframe;
+//}
+
+public struct AnimationChannel
 {
     //variables
     public string channelName;
-    public float value;
-    public float keyFrame;
+    public List<float> value1;
+    public List<float> keyframe1;
+
+
 
 }
+
 public class ParseFile : MonoBehaviour
 {
     int ColumnLength;
     int RowHeight;
-    ObjectInformation holder;
+    public AnimationChannel temp;
 
-    ObjectInformation[,] ObjectHolder;
+    AnimationChannel[] ObjectHolder;
     string text = " ";
     string line = " ";
     int lineNumber;
 
     bool isChannelName;
-    bool isValueName;
     // Start is called before the first frame update
     void Start()
     {
         //this is to make sure that the struct is working
         StreamReader reader = new StreamReader("Assets/TxtFiles/pSphere1_KeyframeOutput.txt");
-        holder.channelName = "No";
-        holder.value = 2.0f;
-        holder.value = 1;
-        holder.keyFrame = 0;
-        ColumnLength = 10;
+        ColumnLength = 4;
         RowHeight = 10;
-        ObjectHolder = new ObjectInformation[ColumnLength, RowHeight];
+        ObjectHolder = new AnimationChannel[ColumnLength];
         string tempS = "";
-        ObjectInformation temp;
-        temp.channelName = "";
-        temp.value = 0;
-        temp.keyFrame = 0;
         lineNumber = 0;
         float[] floatValues;
         float[] floatKeyframes;
         string[] values;
         string[] keyframes;
+
+
+
+        temp = new AnimationChannel();
+        temp.channelName = "";
+        temp.value1 = new List<float>();
+        temp.keyframe1 = new List<float>();
+
         while (text != null)
         {
             text = reader.ReadLine().Trim();
@@ -62,9 +71,6 @@ public class ParseFile : MonoBehaviour
                 //for every char in the line
                 for (int i = 0; i < text.Length; i++)
                 {
-                    temp.channelName = "";
-                    temp.value = 0;
-                    temp.keyFrame = 0;
                     if(isChannelName)
                     {
                         tempS += text[i];
@@ -76,54 +82,54 @@ public class ParseFile : MonoBehaviour
 
                         for (int n = 0; n < values.Length; n++)
                         {
-                            //Debug.Log(values[i]);
                             if (float.TryParse((values[n]), out float num))
                             {
                                 floatValues[n] = float.Parse((values[n]));
-                                Debug.Log(floatValues[n]);
+                                temp.value1.Add(floatValues[n]);
                             }
                         }
-                        temp.value = floatValues[0];
                     }
                     else if(lineNumber == 1)
                     {
                         keyframes = text.Split(',');
                         floatKeyframes = new float[keyframes.Length];
-
                         for (int n = 0; n < keyframes.Length; n++)
                         {
-                            //Debug.Log(values[i]);
                             if(float.TryParse((keyframes[n]), out float num))
                             {
                                 floatKeyframes[n] = float.Parse((keyframes[n]));
-                                Debug.Log(floatKeyframes[n]);
+                                temp.keyframe1.Add(floatKeyframes[n]);
                             }
                         }
-                        temp.keyFrame = floatKeyframes[0];
-
                     }
                     
                 }
                 //set the channel name from the temp string
-                temp.channelName = tempS;
-                if(isChannelName)
+                if (isChannelName)
                 {
                     isChannelName = false;
-
                 }
-                tempS = "";
+                temp.channelName = tempS;
+                
 
                 //set and read out the value for each channel name
                 for (int i = 0; i < ColumnLength; i++)
                 {
-                    for (int j = 0; j < RowHeight; j++)
+                    ObjectHolder[i] = temp;
+                    Debug.Log("Channel Name: " + ObjectHolder[i].channelName);
+                    for (int j = 0; j < ObjectHolder[i].value1.Count; j++)
                     {
-                        ObjectHolder[i, j] = temp;
-                        Debug.Log("Channel Name: " + ObjectHolder[i, j].channelName);             
-                        //Debug.Log("Value: " + ObjectHolder[i, j].value);
-                        //Debug.Log("Keyframe: " + ObjectHolder[i, j].keyFrame);
+                        Debug.Log("Value Name: " + ObjectHolder[i].value1[j]);
+                    }
+                    for (int j = 0; j < ObjectHolder[i].keyframe1.Count; j++)
+                    {
+                        Debug.Log("Keyframe Name: " + ObjectHolder[i].keyframe1[j]);
                     }
                 }
+                tempS = "";
+                temp.keyframe1 = new List<float>();
+                temp.value1 = new List<float>();
+                temp.channelName = "";
             }
             text = " ";
 
