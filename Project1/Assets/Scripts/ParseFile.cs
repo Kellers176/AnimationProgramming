@@ -27,18 +27,27 @@ public class ParseFile : MonoBehaviour
     int RowHeight;
     public AnimationChannel temp;
 
-    AnimationChannel[] ObjectHolder;
+    public AnimationChannel[] ObjectHolder;
     string text = " ";
     string line = " ";
     int lineNumber;
 
     bool isChannelName;
+    bool incrimentNum;
+    int index;
+
+    public AnimationChannel[] GetObjectHolder()
+    {
+        return ObjectHolder;
+    }
+
+
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         //this is to make sure that the struct is working
         StreamReader reader = new StreamReader("Assets/TxtFiles/pSphere1_KeyframeOutput.txt");
-        ColumnLength = 4;
+        ColumnLength = 9;
         RowHeight = 10;
         ObjectHolder = new AnimationChannel[ColumnLength];
         string tempS = "";
@@ -47,7 +56,8 @@ public class ParseFile : MonoBehaviour
         float[] floatKeyframes;
         string[] values;
         string[] keyframes;
-
+        index = 0;
+        incrimentNum = false;
 
 
         temp = new AnimationChannel();
@@ -69,75 +79,88 @@ public class ParseFile : MonoBehaviour
                     isChannelName = true;
                 }
                 //for every char in the line
-                for (int i = 0; i < text.Length; i++)
+                if(isChannelName)
                 {
-                    if(isChannelName)
+
+                    for (int i = 0; i < text.Length; i++)
                     {
                         tempS += text[i];
                     }
-                    else if(lineNumber == 0)
-                    {
-                        values = text.Split(',');
-                        floatValues = new float[values.Length];
-
-                        for (int n = 0; n < values.Length; n++)
-                        {
-                            if (float.TryParse((values[n]), out float num))
-                            {
-                                floatValues[n] = float.Parse((values[n]));
-                                temp.value1.Add(floatValues[n]);
-                            }
-                        }
-                    }
-                    else if(lineNumber == 1)
-                    {
-                        keyframes = text.Split(',');
-                        floatKeyframes = new float[keyframes.Length];
-                        for (int n = 0; n < keyframes.Length; n++)
-                        {
-                            if(float.TryParse((keyframes[n]), out float num))
-                            {
-                                floatKeyframes[n] = float.Parse((keyframes[n]));
-                                temp.keyframe1.Add(floatKeyframes[n]);
-                            }
-                        }
-                    }
-                    
+                        
                 }
+                else if(lineNumber == 0)
+                {
+                    values = text.Split(',');
+                    floatValues = new float[values.Length];
+                    for (int n = 0; n < values.Length; n++)
+                    {
+                        if (float.TryParse((values[n]), out float num))
+                        {
+                            floatValues[n] = float.Parse((values[n]));
+                            temp.value1.Add(floatValues[n]);
+                        }
+                    }
+                }
+                else if(lineNumber == 1)
+                {
+                    keyframes = text.Split(',');
+                    floatKeyframes = new float[keyframes.Length];
+                    for (int n = 0; n < keyframes.Length; n++)
+                    {
+                        if(float.TryParse((keyframes[n]), out float num))
+                        {
+                            floatKeyframes[n] = float.Parse((keyframes[n]));
+                            temp.keyframe1.Add(floatKeyframes[n]);
+                        }
+                    }
+                    incrimentNum = true;
+                }
+                lineNumber++;    
+                
                 //set the channel name from the temp string
                 if (isChannelName)
                 {
+                    temp.channelName = tempS;
+                    ObjectHolder[index].channelName = temp.channelName;
                     isChannelName = false;
+                    lineNumber = 0;
+                    tempS = "";
+                    temp.keyframe1 = new List<float>();
+                    temp.value1 = new List<float>();
                 }
-                temp.channelName = tempS;
-                
-
-                //set and read out the value for each channel name
-                for (int i = 0; i < ColumnLength; i++)
+                else
                 {
-                    ObjectHolder[i] = temp;
-                    Debug.Log("Channel Name: " + ObjectHolder[i].channelName);
-                    for (int j = 0; j < ObjectHolder[i].value1.Count; j++)
+                    //set and read out the value for each channel name
+                    temp.channelName = ObjectHolder[index].channelName;
+                    ObjectHolder[index] = temp;
+                    Debug.Log("Channel Name: " + ObjectHolder[index].channelName);
+                    for (int j = 0; j < ObjectHolder[index].value1.Count; j++)
                     {
-                        Debug.Log("Value Name: " + ObjectHolder[i].value1[j]);
+                        Debug.Log("Value Name: " + ObjectHolder[index].value1[j]);
                     }
-                    for (int j = 0; j < ObjectHolder[i].keyframe1.Count; j++)
+                    for (int j = 0; j < ObjectHolder[index].keyframe1.Count; j++)
                     {
-                        Debug.Log("Keyframe Name: " + ObjectHolder[i].keyframe1[j]);
+                        Debug.Log("Keyframe Name: " + ObjectHolder[index].keyframe1[j]);
                     }
+                    temp.channelName = "";
                 }
-                tempS = "";
-                temp.keyframe1 = new List<float>();
-                temp.value1 = new List<float>();
-                temp.channelName = "";
-            }
-            text = " ";
 
-            lineNumber++;
-            if (lineNumber > 2)
-            {
-                lineNumber = 0;
+                if(incrimentNum)
+                {
+                    index++;
+                    incrimentNum = false;
+                }
+               
             }
+           
+            text = " ";
+            
+            //lineNumber++;
+            //if (lineNumber > 1)
+            //{
+            //    lineNumber = 0;
+            //}
+           
         }
     }
 

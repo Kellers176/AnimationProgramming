@@ -21,10 +21,10 @@ $src_n = `listConnections -s true -d false $node`;
 fprint $file ("#Object Name\n");
 fprint $file ("#\tCurve Name\n");
 fprint $file ("#\tValues Comma Seperated\n");
-fprint $file ("#\tKeyframes Comma Seperated\n\n");
+fprint $file ("#\tKeyframes Comma Seperated\n");
 
 //prints the name of the node
-fprint $file ($node+"\n");
+fprint $file ("#" + $node + "\n");
 
 //Go through all the connections on the node
 for($i=0;$i<size($src_n);$i++) {
@@ -93,7 +93,7 @@ for($i=0;$i<size($src_n);$i++) {
                 }
             }     
         }
-        fprint $file ("\n\n");
+        fprint $file ("\n");
     }
 
 // close the file
