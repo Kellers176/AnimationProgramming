@@ -46,7 +46,16 @@ a3i32 a3kinematicsSolveForwardPartial(const a3_HierarchyState *hierarchyState, c
 
 		for (i = firstIndex; i < end; ++i)
 		{
-
+			//if (i == hierarchyState->poseGroup->hierarchy->nodes->parentIndex)
+			if (i != hierarchyState->poseGroup->hierarchy->nodes->parentIndex)
+				//if (i - 1 == hierarchyState->poseGroup->hierarchy->nodes->parentIndex)
+			{
+				a3real4x4Product(hierarchyState->objectSpace->transform[i].m, hierarchyState->objectSpace->transform[hierarchyState->poseGroup->hierarchy->nodes[i].parentIndex].m, hierarchyState->localSpace->transform[i].m);
+			}
+			else
+			{
+				hierarchyState->objectSpace->transform[i] = hierarchyState->localSpace->transform[i];
+			}
 		}
 
 		// done, return number of nodes updated
@@ -77,7 +86,16 @@ a3i32 a3kinematicsSolveInversePartial(const a3_HierarchyState *hierarchyState, c
 
 		for (i = firstIndex; i < end; ++i)
 		{
-
+			if (i != hierarchyState->poseGroup->hierarchy->nodes->parentIndex)
+			{
+				a3real4x4 temp;
+				a3real4x4TransformInverse(temp, hierarchyState->objectSpace->transform[hierarchyState->poseGroup->hierarchy->nodes[i].parentIndex].m);
+				a3real4x4Product(hierarchyState->localSpace->transform[i].m, temp, hierarchyState->objectSpace->transform[i].m);
+			}
+			else
+			{
+				hierarchyState->localSpace->transform[i] = hierarchyState->objectSpace->transform[i];
+			}
 		}
 
 		// done, return number of nodes updated

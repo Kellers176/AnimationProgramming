@@ -329,11 +329,16 @@ void a3demo_update_skeletal(a3_DemoState* demoState, a3f64 dt)
 	// ****TO-DO: correctly copy data to state
 	a3hierarchyPoseCopy(currentHierarchyState->localPose,
 		currentHierarchyPoseGroup->pose + 0, currentHierarchy->numNodes);
+	//for-loop?
+//for every node in this pose group, go to the next pose group, and lerp between the current pose value, and the value of the next pose group
 
 
 	// proceed with conversion, kinematics and other animation calculations (e.g. skinning)
 	a3hierarchyPoseConvert(currentHierarchyState->localSpace,
 		currentHierarchyState->localPose, currentHierarchy->numNodes, (a3poseFlag_rotate | a3poseFlag_translate));
+	a3kinematicsSolveForward(currentHierarchyState);
+	a3hierarchyStateUpdateObjectInverse(currentHierarchyState, a3false);
+	a3kinematicsSolveInverse(currentHierarchyState);
 	a3kinematicsSolveForward(currentHierarchyState);
 	a3hierarchyStateUpdateObjectBindToCurrent(currentHierarchyState, currentHierarchyState->objectSpaceInverse);
 

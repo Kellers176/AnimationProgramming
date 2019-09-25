@@ -117,6 +117,7 @@ extern "C"
 		a3_HierarchyTransform localSpace[1];
 
 		// object transformations (relative to root's parent's space)
+		//might need to invert object space
 		a3_HierarchyTransform objectSpace[1];
 
 		// inverse object transformations (root relative to this)
