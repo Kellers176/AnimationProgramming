@@ -273,7 +273,7 @@ void a3demo_update_skeletal(a3_DemoState* demoState, a3f64 dt)
 //	a3_HierarchyNodePose* localNodePose;	// blend output
 
 	a3_ClipController* currentClipCtrl;
-//	a3real param_blend;
+	a3real param_blend;
 
 
 	// update scene objects
@@ -323,17 +323,40 @@ void a3demo_update_skeletal(a3_DemoState* demoState, a3f64 dt)
 	currentClipCtrl = demoState->testSkeletonClipController;
 	a3clipControllerUpdate(currentClipCtrl,
 		(a3real)dt * (a3keyboardIsHeld(demoState->keyboard, a3key_space) ? a3real_sixth : a3real_one));
-//	param_blend = currentClipCtrl->keyframeParam;
+	param_blend = currentClipCtrl->keyframeParam;
 
 
 	// ****TO-DO: correctly copy data to state
-	a3hierarchyPoseCopy(currentHierarchyState->localPose,
-		currentHierarchyPoseGroup->pose + 0, currentHierarchy->numNodes);
+//a3hierarchyPoseCopy(currentHierarchyState->localPose,
+//	currentHierarchyPoseGroup->pose + 0, currentHierarchy->numNodes);
 	//for-loop?
 //for every node in this pose group, go to the next pose group, and lerp between the current pose value, and the value of the next pose group
+	for (a3ui32 i = 0; i < currentHierarchy->numNodes; i++)
+	{
+		a3ui32 index = currentHierarchy->nodes[i].index;
 
+		//Get the current node poses
+		a3_HierarchyNodePose* currentPos = currentHierarchyState->poseGroup[0].pose[demoState->editPoseIndex].nodePose + index;
+		//Get the next node pose (% helps with any overflow)
+		a3_HierarchyNodePose* nextPos = currentHierarchyState->poseGroup[0].pose[(demoState->editPoseIndex + 1) % (demoState->testSkeletonHierarchyPoseGroup[demoState->editSkeletonIndex].poseCount)].nodePose + index;
+
+		//Get the current Translation and Orientation as vec3 arrays
+		a3real3p curTranslation = { currentPos->translation.x, currentPos->translation.y, currentPos->translation.z };
+		a3real3p curOrientation = { currentPos->orientation.x, currentPos->orientation.y, currentPos->orientation.z };
+
+		//Get the next node pose Translation and Orientation as vec3 arrays
+		a3real3p nextTranslation = { nextPos->translation.x, nextPos->translation.y, nextPos->translation.z };
+		a3real3p nextOrientation = { nextPos->orientation.x, nextPos->orientation.y, nextPos->orientation.z };
+
+		//Lerp between the values and set the current pose to the output
+		//v? - raw data
+		a3real3Lerp(currentHierarchyState->localPose->nodePose[i].translation.v, curTranslation, nextTranslation, (a3real)0);
+		a3real3Lerp(currentHierarchyState->localPose->nodePose[i].orientation.v, curOrientation, nextOrientation, (a3real)0);
+	}
 
 	// proceed with conversion, kinematics and other animation calculations (e.g. skinning)
+	//a3hierarchyPoseCopy(currentHierarchyState->localPose,
+	//	currentHierarchyPoseGroup->pose + 1, currentHierarchy->numNodes);
 	a3hierarchyPoseConvert(currentHierarchyState->localSpace,
 		currentHierarchyState->localPose, currentHierarchy->numNodes, (a3poseFlag_rotate | a3poseFlag_translate));
 	a3kinematicsSolveForward(currentHierarchyState);
