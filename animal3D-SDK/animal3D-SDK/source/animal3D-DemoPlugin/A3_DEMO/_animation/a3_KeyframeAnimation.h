@@ -80,11 +80,11 @@ extern "C"
 
 		// ****TO-DO
 		// duration of keyframe and reciprocal
-
+		a3real duration, durationInv;
 
 		// ****TO-DO
 		// temporary value can just be an index mapping to some data
-
+		a3ui32 value;
 	};
 
 	// pool of keyframe descriptors
@@ -111,15 +111,15 @@ extern "C"
 		// ****TO-DO
 		// duration of clip and reciprocal; can be calculated as the sum of 
 		//	all keyframe durations or distributed across keyframes
-
+		a3real duration, durationInv;
 
 		// ****TO-DO
 		// number of keyframes in clip (includes first and final)
-
+		a3ui32 keyframeCount;
 
 		// ****TO-DO
 		// temporary first and final keyframe indices in pool
-
+		a3ui32 firstKeyframeIndex, finalKeyframeIndex;
 
 		// keyframes to reference from pool; start of array
 		const a3_Keyframe* keyframeListBasePtr_pool;

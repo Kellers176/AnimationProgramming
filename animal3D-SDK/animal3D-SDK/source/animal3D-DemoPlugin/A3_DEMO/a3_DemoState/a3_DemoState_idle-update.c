@@ -70,6 +70,8 @@ void a3demo_update_main(a3_DemoState *demoState, a3f64 dt)
 
 	const a3f32 dr = demoState->updateAnimation ? (a3f32)dt * 15.0f : 0.0f;
 
+	demoState->dummyThicc = 0;
+
 	const a3i32 useVerticalY = demoState->verticalAxis;
 
 	// model transformations (if needed)
@@ -325,6 +327,7 @@ void a3demo_update_skeletal(a3_DemoState* demoState, a3f64 dt)
 		(a3real)dt * (a3keyboardIsHeld(demoState->keyboard, a3key_space) ? a3real_sixth : a3real_one));
 	param_blend = currentClipCtrl->keyframeParam;
 
+	demoState->dummyThicc += (a3real).1;
 
 	// ****TO-DO: correctly copy data to state
 //a3hierarchyPoseCopy(currentHierarchyState->localPose,
@@ -340,6 +343,9 @@ void a3demo_update_skeletal(a3_DemoState* demoState, a3f64 dt)
 		//Get the next node pose (% helps with any overflow)
 		a3_HierarchyNodePose* nextPos = currentHierarchyState->poseGroup[0].pose[(demoState->editPoseIndex + 1) % (demoState->testSkeletonHierarchyPoseGroup[demoState->editSkeletonIndex].poseCount)].nodePose + index;
 
+		//a3ui32 time = (demoState->editPoseIndex + 1) % (demoState->testSkeletonHierarchyPoseGroup[demoState->editSkeletonIndex].poseCount);
+
+
 		//Get the current Translation and Orientation as vec3 arrays
 		a3real3p curTranslation = { currentPos->translation.x, currentPos->translation.y, currentPos->translation.z };
 		a3real3p curOrientation = { currentPos->orientation.x, currentPos->orientation.y, currentPos->orientation.z };
@@ -350,9 +356,17 @@ void a3demo_update_skeletal(a3_DemoState* demoState, a3f64 dt)
 
 		//Lerp between the values and set the current pose to the output
 		//v? - raw data
-		a3real3Lerp(currentHierarchyState->localPose->nodePose[i].translation.v, curTranslation, nextTranslation, (a3real)0);
-		a3real3Lerp(currentHierarchyState->localPose->nodePose[i].orientation.v, curOrientation, nextOrientation, (a3real)0);
+		//t
+		a3real3Lerp(currentHierarchyState->localPose->nodePose[i].translation.v, curTranslation, nextTranslation, (a3real)demoState->dummyThicc);
+		a3real3Lerp(currentHierarchyState->localPose->nodePose[i].orientation.v, curOrientation, nextOrientation, (a3real)demoState->dummyThicc);
+		
 	}
+
+	if (demoState->dummyThicc > 1)
+	{
+		demoState->dummyThicc = 0;
+	}
+
 
 	// proceed with conversion, kinematics and other animation calculations (e.g. skinning)
 	//a3hierarchyPoseCopy(currentHierarchyState->localPose,

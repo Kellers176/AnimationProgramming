@@ -156,6 +156,9 @@ extern "C"
 		a3i32 frameBorder;
 
 
+		
+
+
 		//---------------------------------------------------------------------
 		// objects that have known or fixed instance count in the whole demo
 
@@ -193,6 +196,7 @@ extern "C"
 		// grid properties
 		a3mat4 gridTransform;
 		a3vec4 gridColor;
+		a3real dummyThicc;
 
 		// cameras
 		a3ui32 activeCamera;
