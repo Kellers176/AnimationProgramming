@@ -333,6 +333,8 @@ void a3demo_update_skeletal(a3_DemoState* demoState, a3f64 dt)
 //a3hierarchyPoseCopy(currentHierarchyState->localPose,
 //	currentHierarchyPoseGroup->pose + 0, currentHierarchy->numNodes);
 	//for-loop?
+	//a3_HierarchyPoseGroup* tempPose = currentHierarchyState->poseGroup;
+
 //for every node in this pose group, go to the next pose group, and lerp between the current pose value, and the value of the next pose group
 	for (a3ui32 i = 0; i < currentHierarchy->numNodes; i++)
 	{
@@ -358,10 +360,18 @@ void a3demo_update_skeletal(a3_DemoState* demoState, a3f64 dt)
 		//v? - raw data
 		//t
 		a3real3Lerp(currentHierarchyState->localPose->nodePose[i].translation.v, curTranslation, nextTranslation, (a3real)demoState->dummyThicc);
-		a3real3Lerp(currentHierarchyState->localPose->nodePose[i].orientation.v, curOrientation, nextOrientation, (a3real)demoState->dummyThicc);
+		a3real3Lerp(currentHierarchyState->localPose->nodePose[i].translation.v, curTranslation, nextTranslation, (a3real)demoState->dummyThicc);
+
+		//JUST FOR TESTING, UNCOMMENT ABOVE BEFORE TURNING IN
+		//a3real3Lerp(currentHierarchyState->localPose->nodePose[i].orientation.v, curOrientation, nextOrientation, 0);
+		//a3real3Lerp(currentHierarchyState->localPose->nodePose[i].orientation.v, curOrientation, nextOrientation, 0);
+		
+		//Set the values to the current
+		//currentHierarchyState->localPose->nodePose[i] = tempPose->pose->nodePose[i];
 		
 	}
 
+	//Reset timer
 	if (demoState->dummyThicc > 1)
 	{
 		demoState->dummyThicc = 0;
