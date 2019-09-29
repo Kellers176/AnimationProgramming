@@ -327,7 +327,7 @@ void a3demo_update_skeletal(a3_DemoState* demoState, a3f64 dt)
 		(a3real)dt * (a3keyboardIsHeld(demoState->keyboard, a3key_space) ? a3real_sixth : a3real_one));
 	param_blend = currentClipCtrl->keyframeParam;
 
-	demoState->dummyThicc += (a3real).1;
+	demoState->dummyThicc += (a3real).01;
 
 	// ****TO-DO: correctly copy data to state
 //a3hierarchyPoseCopy(currentHierarchyState->localPose,
@@ -360,12 +360,12 @@ void a3demo_update_skeletal(a3_DemoState* demoState, a3f64 dt)
 		//v? - raw data
 		//t
 		a3real3Lerp(currentHierarchyState->localPose->nodePose[i].translation.v, curTranslation, nextTranslation, (a3real)demoState->dummyThicc);
-		a3real3Lerp(currentHierarchyState->localPose->nodePose[i].translation.v, curTranslation, nextTranslation, (a3real)demoState->dummyThicc);
+		a3real3Lerp(currentHierarchyState->localPose->nodePose[i].orientation.v, curOrientation, nextOrientation, (a3real)demoState->dummyThicc);
 
 		//JUST FOR TESTING, UNCOMMENT ABOVE BEFORE TURNING IN
 		//a3real3Lerp(currentHierarchyState->localPose->nodePose[i].orientation.v, curOrientation, nextOrientation, 0);
 		//a3real3Lerp(currentHierarchyState->localPose->nodePose[i].orientation.v, curOrientation, nextOrientation, 0);
-		
+		//
 		//Set the values to the current
 		//currentHierarchyState->localPose->nodePose[i] = tempPose->pose->nodePose[i];
 		
