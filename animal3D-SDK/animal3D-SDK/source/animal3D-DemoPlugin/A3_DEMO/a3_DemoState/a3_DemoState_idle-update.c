@@ -240,7 +240,7 @@ void a3demo_update_skeletal(a3_DemoState* demoState, a3f64 dt)
 		0.0f, 0.0f, -1.0f, 0.0f,
 		0.0f, +1.0f, 0.0f, 0.0f,
 		+1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, +1.0f,
+0.0f, 0.0f, 0.0f, +1.0f,
 	};
 
 
@@ -262,17 +262,17 @@ void a3demo_update_skeletal(a3_DemoState* demoState, a3f64 dt)
 	// active camera
 	a3_DemoProjector* camera = demoState->mainCamera + demoState->activeCamera;
 	a3_DemoSceneObject* cameraObject = camera->sceneObject;
-//	a3_DemoSceneObject *currentSceneObject;
+	//	a3_DemoSceneObject *currentSceneObject;
 
 
-	// other objects
+		// other objects
 	a3_HierarchyState* currentHierarchyState;
 	const a3_Hierarchy* currentHierarchy;
 	const a3_HierarchyPoseGroup* currentHierarchyPoseGroup;
 	const a3_HierarchyPoseFlag* currentHierarchyPoseFlag;
 
-//	const a3_HierarchyNodePose* baseNodePose, * srcNodePose, * dstNodePose;	// blend inputs
-//	a3_HierarchyNodePose* localNodePose;	// blend output
+	//	const a3_HierarchyNodePose* baseNodePose, * srcNodePose, * dstNodePose;	// blend inputs
+	//	a3_HierarchyNodePose* localNodePose;	// blend output
 
 	a3_ClipController* currentClipCtrl;
 	a3real param_blend;
@@ -324,7 +324,7 @@ void a3demo_update_skeletal(a3_DemoState* demoState, a3f64 dt)
 	// test animation using clip controller, get param
 	currentClipCtrl = demoState->testSkeletonClipController;
 	a3clipControllerUpdate(currentClipCtrl,
-		(a3real)dt * (a3keyboardIsHeld(demoState->keyboard, a3key_space) ? a3real_sixth : a3real_one));
+		(a3real)dt* (a3keyboardIsHeld(demoState->keyboard, a3key_space) ? a3real_sixth : a3real_one));
 	param_blend = currentClipCtrl->keyframeParam;
 
 	demoState->dummyThicc += (a3real).01;
@@ -339,6 +339,10 @@ void a3demo_update_skeletal(a3_DemoState* demoState, a3f64 dt)
 	for (a3ui32 i = 0; i < currentHierarchy->numNodes; i++)
 	{
 		a3ui32 index = currentHierarchy->nodes[i].index;
+		if (demoState->editPoseIndex >= demoState->testSkeletonHierarchyPoseGroup[demoState->editSkeletonIndex].poseCount)
+		{
+			demoState->editPoseIndex = 0;
+		}
 
 		//Get the current node poses
 		a3_HierarchyNodePose* currentPos = currentHierarchyState->poseGroup[0].pose[demoState->editPoseIndex].nodePose + index;
@@ -369,11 +373,13 @@ void a3demo_update_skeletal(a3_DemoState* demoState, a3f64 dt)
 		//Set the values to the current
 		//currentHierarchyState->localPose->nodePose[i] = tempPose->pose->nodePose[i];
 		
+		
 	}
 
 	//Reset timer
 	if (demoState->dummyThicc > 1)
 	{
+		demoState->editPoseIndex += 1;
 		demoState->dummyThicc = 0;
 	}
 
