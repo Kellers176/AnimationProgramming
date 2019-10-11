@@ -1,0 +1,53 @@
+{
+select -d;
+
+//Step 1: Get the root joint
+//https://stackoverflow.com/questions/22457183/how-to-get-root-node-in-mel-script
+
+// List all joint objects
+string $nodess[] = `ls -type joint` ;
+
+// Replace existing items on active list with this
+select -r $nodess[0] ;   
+
+//Go up the tree until there is no parent
+$relatives[0] = "temp";
+while ($relatives[0] != "") {
+    $relatives = `listRelatives -p`;
+    pickWalk -d up ;
+}
+
+// List all selected objects
+string $rootNode[] = `ls -sl` ;
+
+// Clear selection
+select -cl ;
+
+string $myroot = $rootNode[0];
+print $myroot;
+////////////////////////////
+
+//Some lines of code taken from:
+//https://nccastaff.bournemouth.ac.uk/jmacey/RobTheBloke/www/mel/#1    
+
+// construct the full path to a file
+string $rootName[];
+tokenize($rootNode[0], ":", $rootName);
+$filename = (`internalVar -userTmpDir` + "/../../../Desktop/"+$rootName[0]+"_HTR.htr");
+//$filename = (`internalVar -userTmpDir` + "/../../../Desktop/"+$node+"_KeyframeOutput.txt");
+
+// open the file for writing
+$file = `fopen $filename "w"`;
+
+
+//Output file data
+fprint $file ("[Header]\n");
+fprint $file ("#KeyWord<space>Value<CR>\n");
+fprint $file ("FileType htr\n");
+fprint $file ("DataType HTRS\n");
+fprint $file ("FileVersion 1\n"); //I guess this could change later on
+    
+
+// close the file
+fclose $file;
+};
