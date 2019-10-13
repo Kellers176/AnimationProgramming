@@ -1,5 +1,58 @@
 {
-select -d;
+proc string GetFPSAsFloat()
+		{
+		    string $newTime[];
+		    string $fpsValue = "-1";
+		    string $timeString[];
+		    $timeString[0] = `currentUnit -q -t`;
+		    
+		    switch ($timeString[0])
+		    {
+		        case "game":
+		        $fpsValue = "15";
+		        break;
+		        
+		        case "film":
+		        $fpsValue = "24";
+		        break;
+		        
+		        case "pal":
+		        $fpsValue = "25";
+		        break;
+		        
+		        case "ntsc":
+		        $fpsValue = "30";
+		        break;
+		        
+		        case "show":
+		        $fpsValue = "48";
+		        break;
+		        
+		        case "palf":
+		        $fpsValue = "50";
+		        break;
+		        
+		        case "ntscf":
+		        $fpsValue = "60";
+		        break;
+		    }
+		    
+		    if ($fpsValue == "-1")
+		    {
+		        $fpsValue = "";
+		        
+		        tokenize($timeString[0], "fps", $newTime);
+		        
+		        for ($i = 0; $i < size($newTime); $i++)
+		            $fpsValue += $newTime[$i];
+		    }
+		    
+			return $fpsValue;
+		}
+    
+    //set rotation order to ZYX for better animations
+    xform -p true -roo zyx;
+//select -d;
 
 //Step 1: Get the root joint
 //https://stackoverflow.com/questions/22457183/how-to-get-root-node-in-mel-script
@@ -9,8 +62,16 @@ string $nodess[] = `ls -type joint` ;
 
 //Number of joints in the skeleton
 int $numNodes = `size($nodess)`;
-int $amountOfKeyframes = `keyframe -query -keyframeCount`;
-print $amountOfKeyframes;
+//int $amountOfKeyframes = `keyframe -query -keyframeCount`;
+//print $amountOfKeyframes;
+
+$jointConnections = `listConnections $nodess`;
+for ($i = 0; $i < size($jointConnections); $i++)
+{
+    //get rid of the ones that have effector or constraint in their names
+    //add to a list so we only have the non-repeated ones (maybe check exist)
+    print ($jointConnections[$i] + "\n");
+}
 
 // Replace existing items on active list with this
 select -r $nodess[0] ;   
@@ -51,7 +112,6 @@ $filename = (`internalVar -userTmpDir` + "/../../../Desktop/"+$rootName[0]+"_HTR
 // open the file for writing
 $file = `fopen $filename "w"`;
 
-
 //Output file data
 fprint $file ("[Header]\n");
 fprint $file ("#KeyWord<space>Value<CR>\n");
@@ -59,9 +119,29 @@ fprint $file ("FileType htr\n");
 fprint $file ("DataType HTRS\n");
 fprint $file ("FileVersion 1\n"); //I guess this could change later on
 fprint $file ("NumSegments "+ $numNodes + "\n");
+fprint $file ("NumFrames __ \n");
+fprint $file ("DataFrameRate "+ GetFPSAsFloat() + "\n");
+fprint $file ("EulerRotationOrder "+ `xform -q -roo` + "\n");
+fprint $file ("CalibrationUnits "+ `currentUnit -q -l` + "\n");
+fprint $file ("RotationUnits "+ "___" + "\n");
+fprint $file ("GlobalAxisOfGravity " + "___" + "\n");
+fprint $file ("BoneLengthAxis " + "___" + "\n");
+fprint $file ("ScaleFactor " + "___" + "\n");
+fprint $file ("[SegmentNames&Hierarchy]\n");
+fprint $file ("#ObjectName<tab>ParentObjectName<CR>\n");
 
+//print out all joints with parent
+//if root node print GLOBAL
 
+fprint $file ("[BasePosition]\n");
+fprint $file ("#ObjectName<tab>Tx<tab>Ty<tab>Tz<tab>Rx<tab>Ry<tab>Rz<tab>BoneLength<CR>\n");
 
+//print out every joints position, rotation, and bone length in local space
+//if root print in global space
+
+//For each joint, print out their position, rotation, and bone length for each frame
+fprint $file ("[JOINT_NAME_HERE]\n");
+fprint $file ("#Tx<tab>Ty<tab>Tz<tab>Rx<tab>Ry<tab>Rz<tab>BoneLength<CR>\n");
 
 // close the file
 fclose $file;
