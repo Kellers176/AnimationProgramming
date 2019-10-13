@@ -50,15 +50,21 @@ proc string GetFPSAsFloat()
 			return $fpsValue;
 		}
     
-    //set rotation order to ZYX for better animations
-    xform -p true -roo zyx;
-//select -d;
-
-//Step 1: Get the root joint
-//https://stackoverflow.com/questions/22457183/how-to-get-root-node-in-mel-script
+//set rotation order to ZYX for better animations
+xform -p true -roo zyx;
+    
+//Get bone length axis
+string $temp = `xform -q -roo`;
+string $x = `substring $temp 2 2`;
 
 // List all joint objects
 string $nodess[] = `ls -type joint` ;
+
+for($i = 0; $i < size($nodess); $i++)
+{
+    print($nodess[$i] + " ");
+    print `listRelatives -p $nodess[$i]`;
+}
 
 //Number of joints in the skeleton
 int $numNodes = `size($nodess)`;
@@ -70,7 +76,7 @@ for ($i = 0; $i < size($jointConnections); $i++)
 {
     //get rid of the ones that have effector or constraint in their names
     //add to a list so we only have the non-repeated ones (maybe check exist)
-    print ($jointConnections[$i] + "\n");
+    //print ($jointConnections[$i] + "\n");
 }
 
 // Replace existing items on active list with this
@@ -87,7 +93,7 @@ while ($relatives[0] != "") {
 string $rootNode[] = `ls -sl` ;
 for($j = 0; $j < size($rootNode); $j++)
 {
-    print $rootNode[$j];
+    //print $rootNode[$j];
 }
 
 
@@ -107,8 +113,6 @@ tokenize($rootNode[0], ":", $rootName);
 $filename = (`internalVar -userTmpDir` + "/../../../Desktop/"+$rootName[0]+"_HTR.htr");
 //$filename = (`internalVar -userTmpDir` + "/../../../Desktop/"+$node+"_KeyframeOutput.txt");
 
-
-
 // open the file for writing
 $file = `fopen $filename "w"`;
 
@@ -119,14 +123,14 @@ fprint $file ("FileType htr\n");
 fprint $file ("DataType HTRS\n");
 fprint $file ("FileVersion 1\n"); //I guess this could change later on
 fprint $file ("NumSegments "+ $numNodes + "\n");
-fprint $file ("NumFrames __ \n");
+fprint $file ("NumFrames " + "___" + "\n");
 fprint $file ("DataFrameRate "+ GetFPSAsFloat() + "\n");
 fprint $file ("EulerRotationOrder "+ `xform -q -roo` + "\n");
 fprint $file ("CalibrationUnits "+ `currentUnit -q -l` + "\n");
-fprint $file ("RotationUnits "+ "___" + "\n");
-fprint $file ("GlobalAxisOfGravity " + "___" + "\n");
-fprint $file ("BoneLengthAxis " + "___" + "\n");
-fprint $file ("ScaleFactor " + "___" + "\n");
+fprint $file ("RotationUnits "+ `currentUnit -q -a` + "\n");
+fprint $file ("GlobalAxisOfGravity " + "Y" + "\n"); //maybe change later, unsure how
+fprint $file ("BoneLengthAxis " + $x + "\n");
+fprint $file ("ScaleFactor " + `jointDisplayScale -q -a` + "\n");
 fprint $file ("[SegmentNames&Hierarchy]\n");
 fprint $file ("#ObjectName<tab>ParentObjectName<CR>\n");
 
