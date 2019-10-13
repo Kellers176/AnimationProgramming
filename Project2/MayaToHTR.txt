@@ -7,6 +7,11 @@ select -d;
 // List all joint objects
 string $nodess[] = `ls -type joint` ;
 
+//Number of joints in the skeleton
+int $numNodes = `size($nodess)`;
+int $amountOfKeyframes = `keyframe -query -keyframeCount`;
+print $amountOfKeyframes;
+
 // Replace existing items on active list with this
 select -r $nodess[0] ;   
 
@@ -19,12 +24,17 @@ while ($relatives[0] != "") {
 
 // List all selected objects
 string $rootNode[] = `ls -sl` ;
+for($j = 0; $j < size($rootNode); $j++)
+{
+    print $rootNode[$j];
+}
+
 
 // Clear selection
-select -cl ;
+//select -cl ;
 
 string $myroot = $rootNode[0];
-print $myroot;
+//print $myroot;
 ////////////////////////////
 
 //Some lines of code taken from:
@@ -36,6 +46,8 @@ tokenize($rootNode[0], ":", $rootName);
 $filename = (`internalVar -userTmpDir` + "/../../../Desktop/"+$rootName[0]+"_HTR.htr");
 //$filename = (`internalVar -userTmpDir` + "/../../../Desktop/"+$node+"_KeyframeOutput.txt");
 
+
+
 // open the file for writing
 $file = `fopen $filename "w"`;
 
@@ -46,7 +58,10 @@ fprint $file ("#KeyWord<space>Value<CR>\n");
 fprint $file ("FileType htr\n");
 fprint $file ("DataType HTRS\n");
 fprint $file ("FileVersion 1\n"); //I guess this could change later on
-    
+fprint $file ("NumSegments "+ $numNodes + "\n");
+
+
+
 
 // close the file
 fclose $file;
