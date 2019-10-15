@@ -109,7 +109,6 @@ for ($q = 0; $q < size($tempArr); $q++)
     {
         $nodess[$nodessCounter] = $tempArr[$q];
         $nodessCounter++;
-        print ($tempArr[$q] + "\n");
     }
 }
 
