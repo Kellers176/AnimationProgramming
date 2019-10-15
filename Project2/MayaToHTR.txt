@@ -1,92 +1,103 @@
 {
 proc string GetFPSAsFloat()
-	{
-	    string $newTime[];
-	    string $fpsValue = "-1";
-	    string $timeString[];
-	    $timeString[0] = `currentUnit -q -t`;
-	    
-	    switch ($timeString[0])
-	    {
-	        case "game":
-	        $fpsValue = "15";
-	        break;
-	        
-	        case "film":
-	        $fpsValue = "24";
-	        break;
-	        
-	        case "pal":
-	        $fpsValue = "25";
-	        break;
-	        
-	        case "ntsc":
-	        $fpsValue = "30";
-	        break;
-	        
-	        case "show":
-	        $fpsValue = "48";
-	        break;
-	        
-	        case "palf":
-	        $fpsValue = "50";
-	        break;
-	        
-	        case "ntscf":
-	        $fpsValue = "60";
-	        break;
-	    }
-	    
-	    if ($fpsValue == "-1")
-	    {
-	        $fpsValue = "";
-	        
-	        tokenize($timeString[0], "fps", $newTime);
-	        
-	        for ($i = 0; $i < size($newTime); $i++)
-	            $fpsValue += $newTime[$i];
-	    }
-	    
-		return $fpsValue;
-	}
-		
-proc string RemoveRigNameFromBones(string $boneName)
+		{
+		    string $newTime[];
+		    string $fpsValue = "-1";
+		    string $timeString[];
+		    $timeString[0] = `currentUnit -q -t`;
+		    
+		    switch ($timeString[0])
+		    {
+		        case "game":
+		        $fpsValue = "15";
+		        break;
+		        
+		        case "film":
+		        $fpsValue = "24";
+		        break;
+		        
+		        case "pal":
+		        $fpsValue = "25";
+		        break;
+		        
+		        case "ntsc":
+		        $fpsValue = "30";
+		        break;
+		        
+		        case "show":
+		        $fpsValue = "48";
+		        break;
+		        
+		        case "palf":
+		        $fpsValue = "50";
+		        break;
+		        
+		        case "ntscf":
+		        $fpsValue = "60";
+		        break;
+		    }
+		    
+		    if ($fpsValue == "-1")
+		    {
+		        $fpsValue = "";
+		        
+		        tokenize($timeString[0], "fps", $newTime);
+		        
+		        for ($i = 0; $i < size($newTime); $i++)
+		            $fpsValue += $newTime[$i];
+		    }
+		    
+			return $fpsValue;
+		}
+ proc string RemoveRigNameFromBones(string $boneName)
 	{
 	    string $newBoneName = "";
 	    
 	    string $buffer[];
 	    tokenize $boneName ":" $buffer;
 	  
-	    $newBoneName = $buffer[1];
+	     if(size($buffer) > 1)
+    	      $newBoneName = $buffer[1];
+    	else
+    	    $newBoneName = $buffer[0];
 	  
 		return $newBoneName;
-	}
-
-// List all joint objects
-string $nodess[] = `ls -type joint` ;
-// Replace existing items on active list with this
-select -r $nodess[0] ;   
-// List all selected objects
-string $rootNode[] = `ls -sl` ;
-string $myroot = $rootNode[0];  
-
-// construct the full path to a file
-string $rootName[];
-tokenize($rootNode[0], ":", $rootName);
-//Make File
-$filename = (`internalVar -userTmpDir` + "/../../../Desktop/"+$rootName[0]+"_HTR.htr");
-
-// open the file for writing
-$file = `fopen $filename "w"`;
-
-/////////Start editing
-
+	}   
 //set rotation order to ZYX for better animations
 xform -p true -roo zyx;
     
 //Get bone length axis
 string $temp = `xform -q -roo`;
 string $x = `substring $temp 2 2`;
+
+// List all joint objects
+string $nodess[] = `ls -type joint` ;
+
+//Number of joints in the skeleton
+int $numNodes = `size($nodess)`;
+
+// Replace existing items on active list with this
+select -r $nodess[0] ;   
+
+//Go up the tree until there is no parent
+$relatives[0] = "temp";
+while ($relatives[0] != "") {
+    $relatives = `listRelatives -p`;
+    pickWalk -d up ;
+}
+string $rootNode[] = `ls -sl` ;
+string $myroot = $rootNode[0];
+print $myroot;
+////////////////////////////
+
+//Some lines of code taken from:
+//https://nccastaff.bournemouth.ac.uk/jmacey/RobTheBloke/www/mel/#1    
+
+// construct the full path to a file
+string $rootName[];
+tokenize($rootNode[0], ":", $rootName);
+$filename = (`internalVar -userTmpDir` + "/../../../Desktop/"+ $myroot +"_HTR.htr");
+//$filename = (`internalVar -userTmpDir` + "/../../../Desktop/"+$node+"_KeyframeOutput.txt");
 
 int $maximumTotalKeyframes = 0;
 //Print out all nodes
@@ -139,33 +150,17 @@ for($i = 0; $i < size($nodess); $i++)
         
     ///
     //string $boneName = RemoveRigNameFromBones($nodess[$i]);
-    print($boneName + " ");
-    string $boneName2[] = `listRelatives -p $nodess[$i]`;
-    print (RemoveRigNameFromBones($boneName2[0]) + "\n");
+//    print($boneName + " ");
+//    string $boneName2[] = `listRelatives -p $nodess[$i]`;
+//    print (RemoveRigNameFromBones($boneName2[0]) + "\n");
     
     if ($maximumTotalKeyframes < $maxFrameOnJoint)
         $maximumTotalKeyframes = $maxFrameOnJoint;
 }
 
-//Number of joints in the skeleton
-int $numNodes = `size($nodess)`;
-//int $amountOfKeyframes = `keyframe -query -keyframeCount`;
-//print $amountOfKeyframes;
 
-$jointConnections = `listConnections $nodess`;
-for ($i = 0; $i < size($jointConnections); $i++)
-{
-    //get rid of the ones that have effector or constraint in their names
-    //add to a list so we only have the non-repeated ones (maybe check exist)
-    //print ($jointConnections[$i] + "\n");
-}
-
-//Go up the tree until there is no parent
-$relatives[0] = "temp";
-while ($relatives[0] != "") {
-    $relatives = `listRelatives -p`;
-    pickWalk -d up ;
-}
+// open the file for writing
+$file = `fopen $filename "w"`;
 
 //Output file data
 fprint $file ("[Header]\n");
@@ -180,16 +175,44 @@ fprint $file ("EulerRotationOrder "+ `xform -q -roo` + "\n");
 fprint $file ("CalibrationUnits "+ `currentUnit -q -l` + "\n");
 fprint $file ("RotationUnits "+ `currentUnit -q -a` + "\n");
 fprint $file ("GlobalAxisOfGravity " + "Y" + "\n"); //maybe change later, unsure how
-fprint $file ("BoneLengthAxis " + $x + "\n");
+fprint $file ("BoneLengthAxis " + capitalizeString($x) + "\n");
 fprint $file ("ScaleFactor " + `jointDisplayScale -q -a` + "\n");
 fprint $file ("[SegmentNames&Hierarchy]\n");
 fprint $file ("#ObjectName<tab>ParentObjectName<CR>\n");
 
+//reverse the array so they are in the proper order and 
 //print out all joints with parent
+string $reversedArray[];
+
+for($j = 0; $j < `size($nodess)`; $j++)
+{
+    $reversedArray[( `size($nodess)` - 1 - $j)] = $nodess[$j];
+}
+
+for($i = 0; $i < size($reversedArray); $i++)
+{
+   string $temp[] = `listRelatives -p $reversedArray[$i]`;
+   fprint $file($reversedArray[$i] + "\t");
+   fprint $file ($temp[0] + "\n");
+}
 //if root node print GLOBAL
 
 fprint $file ("[BasePosition]\n");
 fprint $file ("#ObjectName<tab>Tx<tab>Ty<tab>Tz<tab>Rx<tab>Ry<tab>Rz<tab>BoneLength<CR>\n");
+
+
+for($i = 0; $i < size($reversedArray); $i++)
+{
+    //float $attr1 = `getAttr ($reversedArray[$i] + ".positionX")`;
+    //$jointConnections[] = `joint -r $nodess[$i]`;
+    //print $jointConnections[0];
+    //print ($attr1+ "\n");
+    //setAttr ($reversedArray[$i] + ".jointOrientX") $attr1;
+    //$myJoint = (joint)$reversedArray[$i];
+    //fprint $file(joint`$reversedArray[$i]` -p + "\t");
+}
+
+
 
 //print out every joints position, rotation, and bone length in local space
 //if root print in global space
