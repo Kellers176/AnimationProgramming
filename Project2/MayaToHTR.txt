@@ -99,7 +99,19 @@ string $temp = `xform -q -roo`;
 string $x = `substring $temp 2 2`;
 
 // List all joint objects
-string $nodess[] = `ls -type joint` ;
+string $tempArr[] = `ls -type joint` ;
+string $nodess[];
+
+int $nodessCounter = 0;
+for ($q = 0; $q < size($tempArr); $q++)
+{
+    if (`match "rev" $tempArr[$q]` != "rev" && `match "Manip" $tempArr[$q]` != "Manip")
+    {
+        $nodess[$nodessCounter] = $tempArr[$q];
+        $nodessCounter++;
+        print ($tempArr[$q] + "\n");
+    }
+}
 
 //Number of joints in the skeleton
 int $numNodes = `size($nodess)`;
@@ -115,7 +127,6 @@ while ($relatives[0] != "") {
 }
 string $rootNode[] = `ls -sl` ;
 string $myroot = $rootNode[0];
-print $myroot;
 ////////////////////////////
 
 //Some lines of code taken from:
@@ -124,7 +135,7 @@ print $myroot;
 // construct the full path to a file
 string $rootName[];
 tokenize($rootNode[0], ":", $rootName);
-$filename = (`internalVar -userTmpDir` + "/../../../Desktop/"+ $myroot +"_HTR.htr");
+$filename = (`internalVar -userTmpDir` + "/../../../Desktop/"+ $rootName[0] +"_HTR.htr");
 //$filename = (`internalVar -userTmpDir` + "/../../../Desktop/"+$node+"_KeyframeOutput.txt");
 
 int $maximumTotalKeyframes = 0;
@@ -221,8 +232,8 @@ for($j = 0; $j < `size($nodess)`; $j++)
 for($i = 0; $i < size($reversedArray); $i++)
 {
    string $temp[] = `listRelatives -p $reversedArray[$i]`;
-   fprint $file($reversedArray[$i] + "\t");
-   fprint $file ($temp[0] + "\n");
+   fprint $file(RemoveRigNameFromBones($reversedArray[$i]) + "\t");
+   fprint $file (RemoveRigNameFromBones($temp[0]) + "\n");
 }
 //if root node print GLOBAL
 
@@ -247,9 +258,51 @@ for($i = 0; $i < size($reversedArray); $i++)
 //if root print in global space
 
 //For each joint, print out their position, rotation, and bone length for each frame
-fprint $file ("[JOINT_NAME_HERE]\n");
-fprint $file ("#Tx<tab>Ty<tab>Tz<tab>Rx<tab>Ry<tab>Rz<tab>BoneLength<CR>\n");
-
+for($i = 0; $i < size($nodess); $i++)
+{
+    string $boneName = RemoveRigNameFromBones($nodess[$i]);
+    
+    //Get all listConnections and add to array
+    $src_a = `listConnections -s true -d false -c true $nodess[$i]`;
+    $src_n = `listConnections -s true -d false $nodess[$i]`;
+    
+    int $x = 0;
+    //Go through all the connections on the node
+    for($x=0;$x<size($src_n);$x++) {
+        //Need to get the second one of each due to staggered output values
+        $j = $x*2;
+    
+        // query the node type of the connected node
+        $type = `nodeType $src_n[$x]`;
+    
+        // see if it's a
+        //   time to angular curve
+        //   time to length curve  or a
+        //   time to unitless curve
+        if($type=="animCurveTA" ||
+          $type=="animCurveTL" ||
+          $type=="animCurveTU") 
+        {
+            //How many curves are there?
+            int $amountOfCurves = `keyframe -query -keyframeCount $nodess[$i]`;
+            
+            //For each curve, get the keyframe times
+            for($q=0;$q<$amountOfCurves;$q++)
+            {            
+                float $allKeyframeFrames[] = `keyframe -index $q -q $src_a[$j+1]`;
+                
+                //Goes through each keyframe time
+                for($p=0;$p<size($allKeyframeFrames);$p++)
+                {
+                    
+                }
+            }
+        }          
+    }
+    
+    fprint $file ("[" + $boneName+ "]\n");
+    fprint $file ("#Tx<tab>Ty<tab>Tz<tab>Rx<tab>Ry<tab>Rz<tab>BoneLength<CR>\n");
+}
 // close the file
 fclose $file;
 };
