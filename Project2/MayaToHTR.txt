@@ -62,8 +62,8 @@ proc string GetFPSAsFloat()
     	    $newBoneName = $buffer[0];
 	  
 		return $newBoneName;
-	}   
-proc string GetAngleName(string $angName)
+	} 
+	proc string GetAngleName(string $angName)
 	{
 	    string $newAngleName = "";
 	    
@@ -90,7 +90,7 @@ proc string GetAngleName(string $angName)
 	    }
 	  
 		return $newAngleName;
-	}
+	}  
 //set rotation order to ZYX for better animations
 xform -p true -roo zyx;
     
@@ -126,6 +126,7 @@ while ($relatives[0] != "") {
 }
 string $rootNode[] = `ls -sl` ;
 string $myroot = $rootNode[0];
+print $myroot;
 ////////////////////////////
 
 //Some lines of code taken from:
@@ -185,13 +186,6 @@ for($i = 0; $i < size($nodess); $i++)
             }
         }          
     }
-        
-    ///
-    //string $boneName = RemoveRigNameFromBones($nodess[$i]);
-//    print($boneName + " ");
-//    string $boneName2[] = `listRelatives -p $nodess[$i]`;
-//    print (RemoveRigNameFromBones($boneName2[0]) + "\n");
-    
     if ($maximumTotalKeyframes < $maxFrameOnJoint)
         $maximumTotalKeyframes = $maxFrameOnJoint;
 }
@@ -201,7 +195,6 @@ for($i = 0; $i < size($nodess); $i++)
 $file = `fopen $filename "w"`;
 
 //Output file data
-fprint $file ("#Motion Analysis HTR \n");
 fprint $file ("[Header]\n");
 fprint $file ("#KeyWord<space>Value<CR>\n");
 fprint $file ("FileType htr\n");
@@ -212,7 +205,7 @@ fprint $file ("NumFrames " + $maximumTotalKeyframes + "\n");
 fprint $file ("DataFrameRate "+ GetFPSAsFloat() + "\n");
 fprint $file ("EulerRotationOrder "+ `xform -q -roo` + "\n");
 fprint $file ("CalibrationUnits "+ `currentUnit -q -l` + "\n");
-fprint $file ("RotationUnits "+ GetAngleName(`currentUnit -q -a`) + "\n");
+fprint $file ("RotationUnits "+ `currentUnit -q -a` + "\n");
 fprint $file ("GlobalAxisOfGravity " + "Y" + "\n"); //maybe change later, unsure how
 fprint $file ("BoneLengthAxis " + capitalizeString($x) + "\n");
 fprint $file ("ScaleFactor " + `jointDisplayScale -q -a` + "\n");
@@ -239,24 +232,12 @@ for($i = 0; $i < size($reversedArray); $i++)
 fprint $file ("[BasePosition]\n");
 fprint $file ("#ObjectName<tab>Tx<tab>Ty<tab>Tz<tab>Rx<tab>Ry<tab>Rz<tab>BoneLength<CR>\n");
 
-
-for($i = 0; $i < size($reversedArray); $i++)
-{
-    //float $attr1 = `getAttr ($reversedArray[$i] + ".positionX")`;
-    //$jointConnections[] = `joint -r $nodess[$i]`;
-    //print $jointConnections[0];
-    //print ($attr1+ "\n");
-    //setAttr ($reversedArray[$i] + ".jointOrientX") $attr1;
-    //$myJoint = (joint)$reversedArray[$i];
-    //fprint $file(joint`$reversedArray[$i]` -p + "\t");
-}
-
-
-
 //print out every joints position, rotation, and bone length in local space
 //if root print in global space
 
 //For each joint, print out their position, rotation, and bone length for each frame
+fprint $file ("[JOINT_NAME_HERE]\n");
+fprint $file ("#Tx<tab>Ty<tab>Tz<tab>Rx<tab>Ry<tab>Rz<tab>BoneLength<CR>\n");
 for($i = 0; $i < size($nodess); $i++)
 {
     string $boneName = RemoveRigNameFromBones($nodess[$i]);
