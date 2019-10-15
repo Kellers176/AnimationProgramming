@@ -88,6 +88,7 @@ xform -p true -roo zyx;
 string $temp = `xform -q -roo`;
 string $x = `substring $temp 2 2`;
 
+int $maximumTotalKeyframes = 0;
 //Print out all nodes
 for($i = 0; $i < size($nodess); $i++)
 {
@@ -98,6 +99,7 @@ for($i = 0; $i < size($nodess); $i++)
     $src_n = `listConnections -s true -d false $nodess[$i]`;
     
     int $x = 0;
+    int $maxFrameOnJoint = 0;
     //Go through all the connections on the node
     for($x=0;$x<size($src_n);$x++) {
         //Need to get the second one of each due to staggered output values
@@ -114,17 +116,35 @@ for($i = 0; $i < size($nodess); $i++)
           $type=="animCurveTL" ||
           $type=="animCurveTU") 
         {
-          //Name of the curve
-          print ("Keyframes: " + (`keyframe -query -keyframeCount`) + " ");
-        }
-          
+            //How many curves are there?
+            int $amountOfCurves = `keyframe -query -keyframeCount $nodess[$i]`;
+            
+            //For each curve, get the keyframe times
+            for($q=0;$q<$amountOfCurves;$q++)
+            {            
+                float $allKeyframeFrames[] = `keyframe -index $q -q $src_a[$j+1]`;
+                
+                //Goes through each keyframe time
+                for($p=0;$p<size($allKeyframeFrames);$p++)
+                {
+                    //Gets the highest keyframe times and stores it
+                    if($allKeyframeFrames[$p] > $maxFrameOnJoint);
+                    {
+                        $maxFrameOnJoint = $allKeyframeFrames[$p];
+                    }
+                }
+            }
+        }          
     }
-    
+        
     ///
     //string $boneName = RemoveRigNameFromBones($nodess[$i]);
     print($boneName + " ");
     string $boneName2[] = `listRelatives -p $nodess[$i]`;
     print (RemoveRigNameFromBones($boneName2[0]) + "\n");
+    
+    if ($maximumTotalKeyframes < $maxFrameOnJoint)
+        $maximumTotalKeyframes = $maxFrameOnJoint;
 }
 
 //Number of joints in the skeleton
@@ -154,7 +174,7 @@ fprint $file ("FileType htr\n");
 fprint $file ("DataType HTRS\n");
 fprint $file ("FileVersion 1\n"); //I guess this could change later on
 fprint $file ("NumSegments "+ $numNodes + "\n");
-fprint $file ("NumFrames " + "___" + "\n");
+fprint $file ("NumFrames " + $maximumTotalKeyframes + "\n");
 fprint $file ("DataFrameRate "+ GetFPSAsFloat() + "\n");
 fprint $file ("EulerRotationOrder "+ `xform -q -roo` + "\n");
 fprint $file ("CalibrationUnits "+ `currentUnit -q -l` + "\n");
