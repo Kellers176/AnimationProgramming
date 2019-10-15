@@ -90,7 +90,11 @@ proc string GetFPSAsFloat()
 	    }
 	  
 		return $newAngleName;
-	}  
+	} 
+global proc float returnTruncated (float $num, int $places)
+    {
+        return (trunc($num * pow(10, $places)) / pow(10, $places));
+    } 
 //set rotation order to ZYX for better animations
 xform -p true -roo zyx;
     
@@ -231,7 +235,95 @@ for($i = 0; $i < size($reversedArray); $i++)
 
 fprint $file ("[BasePosition]\n");
 fprint $file ("#ObjectName<tab>Tx<tab>Ty<tab>Tz<tab>Rx<tab>Ry<tab>Rz<tab>BoneLength<CR>\n");
+$TruncatedValue = 6;
+//float $xValue, &yValue, $zValue;
+for($i = 0; $i < size($reversedArray); $i++)
+{
+   //vector $joint = `xform -q -ws -t $reversedArray[$i]`;
+   //print ($reversedArray[$i] + "\t" + $joint.x + "\n");
+    //print ($reversedArray[$i] + "\n");
+    //position
+    //since we are in cm we need to go to mm, which means multiplying it by 10 to get correct values
+   float $jointPosition[] = `joint -query -r $reversedArray[$i]`;
+   $xValue = returnTruncated(($jointPosition[2] * 10), $TruncatedValue);
+   $yValue = returnTruncated(($jointPosition[0] * 10), $TruncatedValue);
+   $zValue = returnTruncated(($jointPosition[1] * 10), $TruncatedValue);
+   fprint $file ($reversedArray[$i] + "\t");
+   
+   
+   if ($xValue == 0) 
+   {
+       fprint $file("0.000000" + "\t");
+   }
+   else
+   {
+       fprint $file($xValue + "\t");
+   }
+   if ($yValue == 0) 
+   {
+       fprint $file("0.000000" + "\t");
+   }
+   else
+   {
+       fprint $file($yValue + "\t");
+   }
+   if ($zValue == 0) 
+   {
+       fprint $file("0.000000" + "\t");
+   }
+   else
+   {
+       fprint $file($zValue + "\t");
+   }
+   
+   float $jointRotation[] = `joint -query -o $reversedArray[$i]`;
+   float $x[] = `joint -query -ax $reversedArray[$i]`;
+   float $y[] = `joint -query -ay $reversedArray[$i]`;
+   float $z[] = `joint -query -az $reversedArray[$i]`;
+  // print ($x[0] + "\n");
+   vector $joint = `xform -q -ws -ro  $reversedArray[$i]`;
+  
+   //$rotationX = (returnTruncated($joint.x, $TruncatedValue));
+   //$rotationY = (returnTruncated($joint.y, $TruncatedValue));
+   //$rotationZ =  (returnTruncated($joint.z, $TruncatedValue));
+   $rotationX = (returnTruncated($x[0], $TruncatedValue));
+   $rotationY = (returnTruncated($y[0], $TruncatedValue));
+   $rotationZ =  (returnTruncated($z[0], $TruncatedValue));
+   //print (returnTruncated($jointRotation[0], $TruncatedValue) + "\n");
+   
+    if ($rotationX == 0) 
+   {
+       fprint $file("0.000000" + "\t");
+   }
+   else
+   {
+       fprint $file($rotationX + "\t");
+   }
+   if ($rotationY == 0) 
+   {
+       fprint $file("0.000000" + "\t");
+   }
+   else
+   {
+       fprint $file($rotationY + "\t");
+   }
+   if ($rotationZ == 0) 
+   {
+       fprint $file("0.000000" + "\t");
+   }
+   else
+   {
+       fprint $file($rotationZ + "\t");
+   }
+   //might need this for bone length
+   //https://forums.autodesk.com/t5/maya-programming/how-to-calculate-the-length-of-a-bone-in-a-bone-hierarchy-using/td-p/4028763
+   
+   
+    fprint $file("\n");
 
+  // fprint $file ($reversedArray[$i] + "\t" + returnTruncated(($jointPosition[2] * 10), $TruncatedValue) + "\t" + returnTruncated(($jointPosition[0] * 10), $TruncatedValue) + "\t" + returnTruncated(($jointPosition[1] * 10), $TruncatedValue) + "\n");
+   
+}
 //print out every joints position, rotation, and bone length in local space
 //if root print in global space
 
