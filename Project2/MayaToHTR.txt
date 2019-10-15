@@ -63,6 +63,34 @@ proc string GetFPSAsFloat()
 	  
 		return $newBoneName;
 	}   
+proc string GetAngleName(string $angName)
+	{
+	    string $newAngleName = "";
+	    
+	    switch ($angName)
+	    {
+	        case "deg":
+	            $newAngleName = "Degrees";
+	            break;
+	            
+	        case "degree":
+	            $newAngleName = "Degrees";
+	            break;
+	            
+	        case "rad":
+	            $newAngleName = "Radians";
+	            break;
+	            
+	        case "radian":
+	            $newAngleName = "Radians";
+	            break;
+	            
+	        default:
+	            $newAngleName = "Error in function";
+	    }
+	  
+		return $newAngleName;
+	}
 //set rotation order to ZYX for better animations
 xform -p true -roo zyx;
     
@@ -163,6 +191,7 @@ for($i = 0; $i < size($nodess); $i++)
 $file = `fopen $filename "w"`;
 
 //Output file data
+fprint $file ("#Motion Analysis HTR \n");
 fprint $file ("[Header]\n");
 fprint $file ("#KeyWord<space>Value<CR>\n");
 fprint $file ("FileType htr\n");
@@ -173,7 +202,7 @@ fprint $file ("NumFrames " + $maximumTotalKeyframes + "\n");
 fprint $file ("DataFrameRate "+ GetFPSAsFloat() + "\n");
 fprint $file ("EulerRotationOrder "+ `xform -q -roo` + "\n");
 fprint $file ("CalibrationUnits "+ `currentUnit -q -l` + "\n");
-fprint $file ("RotationUnits "+ `currentUnit -q -a` + "\n");
+fprint $file ("RotationUnits "+ GetAngleName(`currentUnit -q -a`) + "\n");
 fprint $file ("GlobalAxisOfGravity " + "Y" + "\n"); //maybe change later, unsure how
 fprint $file ("BoneLengthAxis " + capitalizeString($x) + "\n");
 fprint $file ("ScaleFactor " + `jointDisplayScale -q -a` + "\n");
