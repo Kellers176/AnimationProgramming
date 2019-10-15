@@ -1,55 +1,86 @@
 {
 proc string GetFPSAsFloat()
-		{
-		    string $newTime[];
-		    string $fpsValue = "-1";
-		    string $timeString[];
-		    $timeString[0] = `currentUnit -q -t`;
-		    
-		    switch ($timeString[0])
-		    {
-		        case "game":
-		        $fpsValue = "15";
-		        break;
-		        
-		        case "film":
-		        $fpsValue = "24";
-		        break;
-		        
-		        case "pal":
-		        $fpsValue = "25";
-		        break;
-		        
-		        case "ntsc":
-		        $fpsValue = "30";
-		        break;
-		        
-		        case "show":
-		        $fpsValue = "48";
-		        break;
-		        
-		        case "palf":
-		        $fpsValue = "50";
-		        break;
-		        
-		        case "ntscf":
-		        $fpsValue = "60";
-		        break;
-		    }
-		    
-		    if ($fpsValue == "-1")
-		    {
-		        $fpsValue = "";
-		        
-		        tokenize($timeString[0], "fps", $newTime);
-		        
-		        for ($i = 0; $i < size($newTime); $i++)
-		            $fpsValue += $newTime[$i];
-		    }
-		    
-			return $fpsValue;
-		}
-    
+	{
+	    string $newTime[];
+	    string $fpsValue = "-1";
+	    string $timeString[];
+	    $timeString[0] = `currentUnit -q -t`;
+	    
+	    switch ($timeString[0])
+	    {
+	        case "game":
+	        $fpsValue = "15";
+	        break;
+	        
+	        case "film":
+	        $fpsValue = "24";
+	        break;
+	        
+	        case "pal":
+	        $fpsValue = "25";
+	        break;
+	        
+	        case "ntsc":
+	        $fpsValue = "30";
+	        break;
+	        
+	        case "show":
+	        $fpsValue = "48";
+	        break;
+	        
+	        case "palf":
+	        $fpsValue = "50";
+	        break;
+	        
+	        case "ntscf":
+	        $fpsValue = "60";
+	        break;
+	    }
+	    
+	    if ($fpsValue == "-1")
+	    {
+	        $fpsValue = "";
+	        
+	        tokenize($timeString[0], "fps", $newTime);
+	        
+	        for ($i = 0; $i < size($newTime); $i++)
+	            $fpsValue += $newTime[$i];
+	    }
+	    
+		return $fpsValue;
+	}
+		
+proc string RemoveRigNameFromBones(string $boneName)
+	{
+	    string $newBoneName = "";
+	    
+	    string $buffer[];
+	    tokenize $boneName ":" $buffer;
+	  
+	    $newBoneName = $buffer[1];
+	  
+		return $newBoneName;
+	}
+
+// List all joint objects
+string $nodess[] = `ls -type joint` ;
+// Replace existing items on active list with this
+select -r $nodess[0] ;   
+// List all selected objects
+string $rootNode[] = `ls -sl` ;
+string $myroot = $rootNode[0];  
+
+// construct the full path to a file
+string $rootName[];
+tokenize($rootNode[0], ":", $rootName);
+//Make File
+$filename = (`internalVar -userTmpDir` + "/../../../Desktop/"+$rootName[0]+"_HTR.htr");
+
+// open the file for writing
+$file = `fopen $filename "w"`;
+
+/////////Start editing
+
 //set rotation order to ZYX for better animations
 xform -p true -roo zyx;
     
@@ -57,13 +88,43 @@ xform -p true -roo zyx;
 string $temp = `xform -q -roo`;
 string $x = `substring $temp 2 2`;
 
-// List all joint objects
-string $nodess[] = `ls -type joint` ;
-
+//Print out all nodes
 for($i = 0; $i < size($nodess); $i++)
 {
-    print($nodess[$i] + " ");
-    print `listRelatives -p $nodess[$i]`;
+    string $boneName = RemoveRigNameFromBones($nodess[$i]);
+    
+    //Get all listConnections and add to array
+    $src_a = `listConnections -s true -d false -c true $nodess[$i]`;
+    $src_n = `listConnections -s true -d false $nodess[$i]`;
+    
+    int $x = 0;
+    //Go through all the connections on the node
+    for($x=0;$x<size($src_n);$x++) {
+        //Need to get the second one of each due to staggered output values
+        $j = $x*2;
+    
+        // query the node type of the connected node
+        $type = `nodeType $src_n[$x]`;
+    
+        // see if it's a
+        //   time to angular curve
+        //   time to length curve  or a
+        //   time to unitless curve
+        if($type=="animCurveTA" ||
+          $type=="animCurveTL" ||
+          $type=="animCurveTU") 
+        {
+          //Name of the curve
+          print ("Keyframes: " + (`keyframe -query -keyframeCount`) + " ");
+        }
+          
+    }
+    
+    ///
+    //string $boneName = RemoveRigNameFromBones($nodess[$i]);
+    print($boneName + " ");
+    string $boneName2[] = `listRelatives -p $nodess[$i]`;
+    print (RemoveRigNameFromBones($boneName2[0]) + "\n");
 }
 
 //Number of joints in the skeleton
@@ -79,42 +140,12 @@ for ($i = 0; $i < size($jointConnections); $i++)
     //print ($jointConnections[$i] + "\n");
 }
 
-// Replace existing items on active list with this
-select -r $nodess[0] ;   
-
 //Go up the tree until there is no parent
 $relatives[0] = "temp";
 while ($relatives[0] != "") {
     $relatives = `listRelatives -p`;
     pickWalk -d up ;
 }
-
-// List all selected objects
-string $rootNode[] = `ls -sl` ;
-for($j = 0; $j < size($rootNode); $j++)
-{
-    //print $rootNode[$j];
-}
-
-
-// Clear selection
-//select -cl ;
-
-string $myroot = $rootNode[0];
-//print $myroot;
-////////////////////////////
-
-//Some lines of code taken from:
-//https://nccastaff.bournemouth.ac.uk/jmacey/RobTheBloke/www/mel/#1    
-
-// construct the full path to a file
-string $rootName[];
-tokenize($rootNode[0], ":", $rootName);
-$filename = (`internalVar -userTmpDir` + "/../../../Desktop/"+$rootName[0]+"_HTR.htr");
-//$filename = (`internalVar -userTmpDir` + "/../../../Desktop/"+$node+"_KeyframeOutput.txt");
-
-// open the file for writing
-$file = `fopen $filename "w"`;
 
 //Output file data
 fprint $file ("[Header]\n");
