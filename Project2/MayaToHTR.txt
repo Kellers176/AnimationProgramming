@@ -95,6 +95,26 @@ global proc float returnTruncated (float $num, int $places)
     {
         return (trunc($num * pow(10, $places)) / pow(10, $places));
     } 
+    
+global proc float getJointLength(string $jnt1, string $jnt2)
+{
+    //get jnt1 worldspace position
+    float $jnt2Pos[] = `xform -q -ws -t $jnt1`;
+
+    //get jnt2 worldspace position    
+    float $jnt1Pos[] = `xform -q -ws -t $jnt2`;
+
+    //calculate the vector between them
+    float $xcomp = $jnt2Pos[0] -$jnt1Pos[0];
+    float $ycomp = $jnt2Pos[1] -$jnt1Pos[1];
+    float $zcomp = $jnt2Pos[2] -$jnt1Pos[2];
+
+    vector $tmp = << $xcomp, $ycomp, $zcomp>>;
+
+    //get the vector length
+    float $res = mag($tmp);
+    return $res;
+}
 //set rotation order to ZYX for better animations
 xform -p true -roo zyx;
     
@@ -221,6 +241,20 @@ for($i = 0; $i < size($reversedArray); $i++)
    fprint $file(RemoveRigNameFromBones($reversedArray[$i]) + "\t");
    fprint $file (RemoveRigNameFromBones($temp[0]) + "\n");
 }
+string $parents[];
+float $parentBones[];
+for($i = 0; $i < size($reversedArray); $i++)
+{
+    string $temp[] = `listRelatives -p $reversedArray[$i]`;
+    $parents[$i] = $temp[0];
+ 
+    string $currentChild = $reversedArray[$i];
+   float $boneLength = getJointLength($parents[$i], $currentChild);
+   $parentBones[$i] = $boneLength * 10;
+    print($parents[$i] + " " + $parentBones[$i] +  "\n");
+    
+    
+}
 //if root node print GLOBAL
 
 fprint $file ("[BasePosition]\n");
@@ -229,11 +263,6 @@ $TruncatedValue = 6;
 //float $xValue, &yValue, $zValue;
 for($i = 0; $i < size($reversedArray); $i++)
 {
-   //vector $joint = `xform -q -ws -t $reversedArray[$i]`;
-   //print ($reversedArray[$i] + "\t" + $joint.x + "\n");
-    //print ($reversedArray[$i] + "\n");
-    //position
-    //since we are in cm we need to go to mm, which means multiplying it by 10 to get correct values
    float $jointPosition[] = `joint -query -r $reversedArray[$i]`;
    $xValue = returnTruncated(($jointPosition[2] * 10), $TruncatedValue);
    $yValue = returnTruncated(($jointPosition[0] * 10), $TruncatedValue);
@@ -267,19 +296,16 @@ for($i = 0; $i < size($reversedArray); $i++)
    }
    
    float $jointRotation[] = `joint -query -o $reversedArray[$i]`;
+   
    float $x[] = `joint -query -ax $reversedArray[$i]`;
    float $y[] = `joint -query -ay $reversedArray[$i]`;
    float $z[] = `joint -query -az $reversedArray[$i]`;
-  // print ($x[0] + "\n");
-   vector $joint = `xform -q -os -ro  $reversedArray[$i]`;
-  
-   //$rotationX = (returnTruncated($joint.x, $TruncatedValue));
-   //$rotationY = (returnTruncated($joint.y, $TruncatedValue));
-   //$rotationZ =  (returnTruncated($joint.z, $TruncatedValue));
-   $rotationX = (returnTruncated($x[0], $TruncatedValue));
-   $rotationY = (returnTruncated($y[0], $TruncatedValue));
-   $rotationZ =  (returnTruncated($z[0], $TruncatedValue));
-   //print (returnTruncated($jointRotation[0], $TruncatedValue) + "\n");
+   
+   vector $joint = `xform -q -os -ro $reversedArray[$i]`;
+   
+   $rotationX = (returnTruncated($joint.x, $TruncatedValue));
+   $rotationY = (returnTruncated($joint.y, $TruncatedValue));
+   $rotationZ =  (returnTruncated($joint.z, $TruncatedValue));
    
     if ($rotationX == 0) 
    {
@@ -305,15 +331,14 @@ for($i = 0; $i < size($reversedArray); $i++)
    {
        fprint $file($rotationZ + "\t");
    }
-   //might need this for bone length
-   //https://forums.autodesk.com/t5/maya-programming/how-to-calculate-the-length-of-a-bone-in-a-bone-hierarchy-using/td-p/4028763
-   
-   
+    
     fprint $file("\n");
 
   // fprint $file ($reversedArray[$i] + "\t" + returnTruncated(($jointPosition[2] * 10), $TruncatedValue) + "\t" + returnTruncated(($jointPosition[0] * 10), $TruncatedValue) + "\t" + returnTruncated(($jointPosition[1] * 10), $TruncatedValue) + "\n");
    
 }
+
+
 //print out every joints position, rotation, and bone length in local space
 //if root print in global space
 
