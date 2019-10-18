@@ -130,7 +130,6 @@ while ($relatives[0] != "") {
 }
 string $rootNode[] = `ls -sl` ;
 string $myroot = $rootNode[0];
-print $myroot;
 ////////////////////////////
 
 //Some lines of code taken from:
@@ -143,52 +142,43 @@ $filename = (`internalVar -userTmpDir` + "/../../../Desktop/"+ $rootName[0] +"_H
 //$filename = (`internalVar -userTmpDir` + "/../../../Desktop/"+$node+"_KeyframeOutput.txt");
 
 int $maximumTotalKeyframes = 0;
-//Print out all nodes
-for($i = 0; $i < size($nodess); $i++)
+string $temp2Arr[] = `ls` ;
+//Print out all nodes (need to use tempArr because of manip animations)
+for($i = 0; $i < size($temp2Arr); $i++)
 {
-    string $boneName = RemoveRigNameFromBones($nodess[$i]);
-    
     //Get all listConnections and add to array
-    $src_a = `listConnections -s true -d false -c true $nodess[$i]`;
-    $src_n = `listConnections -s true -d false $nodess[$i]`;
+    $src_a = `listConnections -s true -d false -c true $temp2Arr[$i]`;
+    $src_n = `listConnections -s true -d false $temp2Arr[$i]`;
     
     int $x = 0;
     int $maxFrameOnJoint = 0;
     //Go through all the connections on the node
     for($x=0;$x<size($src_n);$x++) {
-        //Need to get the second one of each due to staggered output values
-        $j = $x*2;
-    
+        
+        $j = $x;
+        
         // query the node type of the connected node
         $type = `nodeType $src_n[$x]`;
-    
-        // see if it's a
-        //   time to angular curve
-        //   time to length curve  or a
-        //   time to unitless curve
-        if($type=="animCurveTA" ||
-          $type=="animCurveTL" ||
-          $type=="animCurveTU") 
-        {
-            //How many curves are there?
-            int $amountOfCurves = `keyframe -query -keyframeCount $nodess[$i]`;
+        
+        //How many curves are there?
+        int $amountOfCurves = `keyframe -query -keyframeCount $temp2Arr[$i]`;
+        
+        //For each curve, get the keyframe times
+        for($q=0;$q<$amountOfCurves;$q++)
+        {            
+            float $allKeyframeFrames[] = `keyframe -index $q -q $src_a[$j]`;
             
-            //For each curve, get the keyframe times
-            for($q=0;$q<$amountOfCurves;$q++)
-            {            
-                float $allKeyframeFrames[] = `keyframe -index $q -q $src_a[$j+1]`;
-                
-                //Goes through each keyframe time
-                for($p=0;$p<size($allKeyframeFrames);$p++)
+            //Goes through each keyframe time
+            for($p=0;$p<size($allKeyframeFrames);$p++)
+            {
+                //Gets the highest keyframe times and stores it
+                if($allKeyframeFrames[$p] > $maxFrameOnJoint);
                 {
-                    //Gets the highest keyframe times and stores it
-                    if($allKeyframeFrames[$p] > $maxFrameOnJoint);
-                    {
-                        $maxFrameOnJoint = $allKeyframeFrames[$p];
-                    }
+                    $maxFrameOnJoint = $allKeyframeFrames[$p];
                 }
             }
-        }          
+        }
+                  
     }
     if ($maximumTotalKeyframes < $maxFrameOnJoint)
         $maximumTotalKeyframes = $maxFrameOnJoint;
@@ -248,7 +238,7 @@ for($i = 0; $i < size($reversedArray); $i++)
    $xValue = returnTruncated(($jointPosition[2] * 10), $TruncatedValue);
    $yValue = returnTruncated(($jointPosition[0] * 10), $TruncatedValue);
    $zValue = returnTruncated(($jointPosition[1] * 10), $TruncatedValue);
-   fprint $file ($reversedArray[$i] + "\t");
+   fprint $file (RemoveRigNameFromBones($reversedArray[$i]) + "\t");
    
    
    if ($xValue == 0) 
@@ -281,7 +271,7 @@ for($i = 0; $i < size($reversedArray); $i++)
    float $y[] = `joint -query -ay $reversedArray[$i]`;
    float $z[] = `joint -query -az $reversedArray[$i]`;
   // print ($x[0] + "\n");
-   vector $joint = `xform -q -ws -ro  $reversedArray[$i]`;
+   vector $joint = `xform -q -os -ro  $reversedArray[$i]`;
   
    //$rotationX = (returnTruncated($joint.x, $TruncatedValue));
    //$rotationY = (returnTruncated($joint.y, $TruncatedValue));
@@ -328,52 +318,90 @@ for($i = 0; $i < size($reversedArray); $i++)
 //if root print in global space
 
 //For each joint, print out their position, rotation, and bone length for each frame
-fprint $file ("[JOINT_NAME_HERE]\n");
-fprint $file ("#Tx<tab>Ty<tab>Tz<tab>Rx<tab>Ry<tab>Rz<tab>BoneLength<CR>\n");
 for($i = 0; $i < size($nodess); $i++)
 {
-    string $boneName = RemoveRigNameFromBones($nodess[$i]);
-    
-    //Get all listConnections and add to array
-    $src_a = `listConnections -s true -d false -c true $nodess[$i]`;
-    $src_n = `listConnections -s true -d false $nodess[$i]`;
-    
-    int $x = 0;
-    //Go through all the connections on the node
-    for($x=0;$x<size($src_n);$x++) {
-        //Need to get the second one of each due to staggered output values
-        $j = $x*2;
-    
-        // query the node type of the connected node
-        $type = `nodeType $src_n[$x]`;
-    
-        // see if it's a
-        //   time to angular curve
-        //   time to length curve  or a
-        //   time to unitless curve
-        if($type=="animCurveTA" ||
-          $type=="animCurveTL" ||
-          $type=="animCurveTU") 
-        {
-            //How many curves are there?
-            int $amountOfCurves = `keyframe -query -keyframeCount $nodess[$i]`;
-            
-            //For each curve, get the keyframe times
-            for($q=0;$q<$amountOfCurves;$q++)
-            {            
-                float $allKeyframeFrames[] = `keyframe -index $q -q $src_a[$j+1]`;
-                
-                //Goes through each keyframe time
-                for($p=0;$p<size($allKeyframeFrames);$p++)
-                {
-                    
-                }
-            }
-        }          
-    }
+    string $boneName = RemoveRigNameFromBones($reversedArray[$i]);
     
     fprint $file ("[" + $boneName+ "]\n");
-    fprint $file ("#Tx<tab>Ty<tab>Tz<tab>Rx<tab>Ry<tab>Rz<tab>BoneLength<CR>\n");
+    fprint $file ("#Frame<tab>Tx<tab>Ty<tab>Tz<tab>Rx<tab>Ry<tab>Rz<tab>BoneLength<CR>\n");
+    
+    //float $y = `currentTime -q`;
+    //float $t = `getAttr -time $y ($reversedArray[$i] + ".tx")`;
+    //print("\nNode: " + $reversedArray[$i] + " at " + $y + " is " + $t);
+    
+    //For each bone, go through all the maximum number of keyframes
+    for ($f = 0; $f <= $maximumTotalKeyframes; $f++)
+    {
+        string $Tx = "";
+        float $TempTx = `getAttr -time $f ($reversedArray[$i] + ".tx")`;
+        if ($TempTx == 0)
+            $Tx = "0.000000";
+        else
+        {
+            $Tx = returnTruncated($TempTx, 6);
+            if (`match "e" $Tx ` == "e") //For any value that is too small for a computer to read
+                $Tx = "0.000000";
+        }
+        
+        string $Ty = "";
+        float $TempTy = `getAttr -time $f ($reversedArray[$i] + ".ty")`;
+        if ($TempTy == 0)
+            $Ty = "0.000000";
+        else
+        {
+            $Ty = returnTruncated($TempTy, 6);
+            if (`match "e" $Ty ` == "e") //For any value that is too small for a computer to read
+                $Ty = "0.000000";
+        }
+            
+        string $Tz = "";
+        float $TempTz = `getAttr -time $f ($reversedArray[$i] + ".tz")`;
+        if ($TempTz == 0)
+            $Tz = "0.000000";
+        else
+        {
+            $Tz = returnTruncated($TempTz, 6);
+            if (`match "e" $Tz ` == "e") //For any value that is too small for a computer to read
+                $Tz = "0.000000";
+        }
+            
+        string $Rx = "";
+        float $TempRx = `getAttr -time $f ($reversedArray[$i] + ".rx")`;
+        if ($TempRx == 0)
+            $Rx = "0.000000";
+        else
+        {
+            $Rx = returnTruncated($TempRx, 6);
+            if (`match "e" $Rx ` == "e") //For any value that is too small for a computer to read
+                $Rx = "0.000000";
+        }
+            
+        string $Ry = "";
+        float $TempRy = `getAttr -time $f ($reversedArray[$i] + ".ry")`;
+        if ($TempRy == 0)
+            $Ry = "0.000000";
+        else
+        {
+            $Ry = returnTruncated($TempRy, 6);
+            if (`match "e" $Ry ` == "e") //For any value that is too small for a computer to read
+                $Ry = "0.000000";
+        }
+            
+        string $Rz = "";
+        float $TempRz = `getAttr -time $f ($reversedArray[$i] + ".rz")`;
+        if ($TempRz == 0)
+            $Rz = "0.000000";
+        else
+        {
+            $Rz = returnTruncated($TempRz, 6);
+            if (`match "e" $Rz ` == "e") //For any value that is too small for a computer to read
+                $Rz = "0.000000";
+        }
+            
+        //float $BoneLength = `getAttr -time $f ($reversedArray[$i] + ".tx")`;
+        
+        fprint $file ($f + "\t" + $Tx + "\t" + $Ty + "\t" + $Tz + "\t" + $Rx + "\t" + $Ry + "\t" + $Rz + "\t" + "BoneLength" + "\n");
+    }
 }
 // close the file
 fclose $file;
