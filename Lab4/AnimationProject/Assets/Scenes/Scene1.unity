@@ -258,6 +258,7 @@ GameObject:
   - component: {fileID: 444801443}
   - component: {fileID: 444801442}
   - component: {fileID: 444801441}
+  - component: {fileID: 444801444}
   m_Layer: 0
   m_Name: pose_avg
   m_TagString: Untagged
@@ -338,6 +339,23 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 444801439}
   m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &444801444
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 444801439}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0939265bcb00bdc4fbea3dc8dfebb8ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  usingQuaternionRotation: 1
+  pose_0: {fileID: 1426822963}
+  pose_1: {fileID: 509746466}
+  pose_identity: {fileID: 419828124}
+  parameter: 0
 --- !u!1 &509746465
 GameObject:
   m_ObjectHideFlags: 0
@@ -366,7 +384,7 @@ Transform:
   m_GameObject: {fileID: 509746465}
   m_LocalRotation: {x: -0, y: -0, z: -0.38771844, w: 0.92177784}
   m_LocalPosition: {x: -4.8306212, y: 1.9635118, z: -7.5455217}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 1.187, z: 1}
   m_Children: []
   m_Father: {fileID: 428887738}
   m_RootOrder: 3
@@ -632,7 +650,7 @@ Transform:
   m_GameObject: {fileID: 1426822962}
   m_LocalRotation: {x: -0, y: -0, z: 0.30160317, w: 0.95343363}
   m_LocalPosition: {x: -7.4934587, y: 1.9635118, z: -10.475522}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.1774, y: 2.2342343, z: 1.1774}
   m_Children: []
   m_Father: {fileID: 428887738}
   m_RootOrder: 2
@@ -742,6 +760,7 @@ GameObject:
   - component: {fileID: 1601558366}
   - component: {fileID: 1601558365}
   - component: {fileID: 1601558364}
+  - component: {fileID: 1601558367}
   m_Layer: 0
   m_Name: pose_scale
   m_TagString: Untagged
@@ -822,6 +841,22 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1601558362}
   m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1601558367
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1601558362}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b37198b16e41fa459740a34f4ffb392, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  usingQuaternionRotation: 1
+  pose_1: {fileID: 509746466}
+  pose_identity: {fileID: 419828124}
+  parameter: 0
 --- !u!1 &1826053721
 GameObject:
   m_ObjectHideFlags: 0
@@ -834,6 +869,7 @@ GameObject:
   - component: {fileID: 1826053725}
   - component: {fileID: 1826053724}
   - component: {fileID: 1826053723}
+  - component: {fileID: 1826053726}
   m_Layer: 0
   m_Name: pose_add
   m_TagString: Untagged
@@ -914,6 +950,21 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1826053721}
   m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1826053726
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1826053721}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61385ddfb1d45f64e880217aad7ecc33, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  usingQuaternionRotation: 1
+  pose_0: {fileID: 1426822963}
+  pose_1: {fileID: 509746466}
 --- !u!1 &1908885175
 GameObject:
   m_ObjectHideFlags: 0
@@ -1018,6 +1069,7 @@ GameObject:
   - component: {fileID: 2023766627}
   - component: {fileID: 2023766626}
   - component: {fileID: 2023766625}
+  - component: {fileID: 2023766628}
   m_Layer: 0
   m_Name: pose_lerp
   m_TagString: Untagged
@@ -1098,3 +1150,19 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2023766623}
   m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &2023766628
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2023766623}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02273d2cd7e108e4197759b75d0e0ea0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  usingQuaternionRotation: 1
+  pose_0: {fileID: 1426822963}
+  pose_1: {fileID: 509746466}
+  parameter: 0.1
