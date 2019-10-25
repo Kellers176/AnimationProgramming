@@ -62,11 +62,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\BlendOps\HierarchyTestBlendAdd.cs" />
     <Compile Include="Assets\Scripts\BlendOps\TestBlend.cs" />
     <Compile Include="Assets\Scripts\BlendOps\TestBlendAdd.cs" />
     <Compile Include="Assets\Scripts\BlendOps\TestBlendAverage.cs" />
     <Compile Include="Assets\Scripts\BlendOps\TestBlendLerp.cs" />
     <Compile Include="Assets\Scripts\BlendOps\TestBlendScale.cs" />
+    <Compile Include="Assets\Scripts\FK.cs" />
+    <Compile Include="Assets\Scripts\Hierchary.cs" />
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>C:/Users/zachary.phillips/Desktop/Haha yeet/Animal/Lab4/AnimationProject/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
     </Reference>
