@@ -804,14 +804,14 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 301354249}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 02273d2cd7e108e4197759b75d0e0ea0, type: 3}
+  m_Script: {fileID: 11500000, guid: c4972f43090c0754c8c475d7cb06f898, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  usingQuaternionRotation: 1
-  pose_0: {fileID: 0}
-  pose_1: {fileID: 0}
+  poses:
+  - {fileID: 1909014126}
+  - {fileID: 2071562208}
   parameter: 0
 --- !u!1 &310199606
 GameObject:
@@ -1026,8 +1026,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 3.846154}
   m_LocalScale: {x: 0.7692308, y: 0.7692308, z: 0.7692308}
   m_Children:
-  - {fileID: 1091043949}
   - {fileID: 732024397}
+  - {fileID: 1091043949}
   m_Father: {fileID: 610793872}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: -35.131, y: 0, z: 0}
@@ -1490,7 +1490,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 426057244}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!135 &732024398
 SphereCollider:
@@ -2266,14 +2266,15 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 932430156}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b37198b16e41fa459740a34f4ffb392, type: 3}
+  m_Script: {fileID: 11500000, guid: c88e5abcaec622440a399ed0e8351cb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  usingQuaternionRotation: 1
-  pose_1: {fileID: 0}
-  parameter: 1
+  poses:
+  - {fileID: 1353474041}
+  - {fileID: 786340619}
+  parameter: 0
 --- !u!1 &954007132
 GameObject:
   m_ObjectHideFlags: 0
@@ -2664,7 +2665,7 @@ Transform:
   m_LocalScale: {x: 0.6000002, y: 2, z: 0.6000008}
   m_Children: []
   m_Father: {fileID: 426057244}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!136 &1091043950
 CapsuleCollider:
@@ -3045,12 +3046,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a138986d8f62e8f4aa364286e581e398, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  usingQuaternionRotation: 1
   poses:
   - {fileID: 1909014126}
   - {fileID: 2071562208}
-  - {fileID: 1353474041}
-  - {fileID: 786340619}
 --- !u!1 &1337475811
 GameObject:
   m_ObjectHideFlags: 0
@@ -3951,15 +3949,15 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1908866761}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0939265bcb00bdc4fbea3dc8dfebb8ea, type: 3}
+  m_Script: {fileID: 11500000, guid: 10a5c7f03403eb748aec50ae1b14f9c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  usingQuaternionRotation: 1
-  pose_0: {fileID: 0}
-  pose_1: {fileID: 0}
-  parameter: 1
+  poses:
+  - {fileID: 1909014126}
+  - {fileID: 2071562208}
+  parameter: 0
 --- !u!1 &1909014125
 GameObject:
   m_ObjectHideFlags: 0

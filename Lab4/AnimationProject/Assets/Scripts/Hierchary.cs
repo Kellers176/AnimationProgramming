@@ -4,25 +4,63 @@ using UnityEngine;
 
 public class Hierchary : MonoBehaviour
 {
-    public GameObject rootNode;
+    protected const string NODE_TAG = "Node";
 
-    GameObject parentNode;
-    GameObject childNode;
+    protected Transform pose_result;
 
-    GameObject currentNode;
+    Transform rootNode;
 
-    const string NODE_TAG = "Node";
+    protected bool usingQuaternionRotation = true;
+
+    protected struct BetterTransform
+    {
+        public Vector3 pos;
+        public Vector3 eulerRot;
+        public Vector3 scale;
+        public Quaternion quat;
+
+        public void Init()
+        {
+            //Hard coded jazz
+            pos = Vector3.zero;
+            eulerRot = Vector3.zero;
+            scale = Vector3.one;
+            quat = Quaternion.identity;
+        }
+    }
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        pose_result = this.gameObject.transform;
+        rootNode = this.gameObject.transform;
     }
 
-    // Update is called once per frame
-    void Update()
+    protected void SetPoseResult(BetterTransform newTrans, int downHierchary)
     {
-        
+        Transform temp = rootNode;
+
+        //Getting the current node via the down var
+        for (int i = 0; i <= downHierchary; i++)
+        {
+            for (int p = 0; p < temp.childCount; p++)
+            {
+                if (temp.GetChild(p).gameObject.tag == NODE_TAG)
+                {
+                    temp = temp.GetChild(p);
+                    break;
+                }
+            }
+        }
+
+        temp.localPosition = newTrans.pos;
+        temp.localScale = newTrans.scale;
+
+        if (usingQuaternionRotation)
+            temp.localRotation = newTrans.quat;
+
+        else
+            temp.localEulerAngles = newTrans.eulerRot;
     }
 
     List<GameObject> GetConnectedNodes(GameObject current)

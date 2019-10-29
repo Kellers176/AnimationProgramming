@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HierarchyTestBlendAdd : Hierchary
+public class HierarchyTestBlendScale : Hierchary
 {
 
     public Transform[] poses;
 
-    BetterTransform passTrans;
+    BetterTransform passTrans;  
+
+    [Range(0, 1)]
+    public float parameter;
 
     // Update is called once per frame
     void Update()
@@ -61,20 +64,21 @@ public class HierarchyTestBlendAdd : Hierchary
                     }
                 }
 
-                passTrans.pos = (node1.localPosition + node2.localPosition) / 2; //Do we average idk dude
+                //translation: literal linear interpolaton
+                passTrans.pos = Vector3.Lerp(node1.localPosition, node2.localPosition, parameter);
 
-                //for scale - need to multiply each scale together (component-wise multiplication)
-                passTrans.scale = node1.localScale;
-                passTrans.scale.Scale(node2.localScale);
+                //scale: literal linear interpolation
+                passTrans.scale = Vector3.Lerp(node1.localScale, node2.localScale, parameter);
 
-                //rotation is just addition unless  using quaternion and then it will be multiplication
+
+                //rotation: SLERP (or NLERP) if using quaternions otherwise regular literal linaer interpolation
                 if (usingQuaternionRotation)
                 {
-                    passTrans.quat = node1.localRotation * node2.localRotation;
+                    passTrans.quat = Quaternion.Slerp(node1.localRotation, node2.localRotation, parameter);
                 }
                 else
                 {
-                    passTrans.eulerRot = node1.localEulerAngles + node2.localEulerAngles;
+                    passTrans.eulerRot = Vector3.Lerp(node1.localEulerAngles, node2.localEulerAngles, parameter);
                 }
 
                 SetPoseResult(passTrans, j);

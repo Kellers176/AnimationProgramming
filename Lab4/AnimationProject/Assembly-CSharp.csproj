@@ -63,6 +63,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\BlendOps\HierarchyTestBlendAdd.cs" />
+    <Compile Include="Assets\Scripts\BlendOps\HierarchyTestBlendAvg.cs" />
+    <Compile Include="Assets\Scripts\BlendOps\HierarchyTestBlendLerp.cs" />
+    <Compile Include="Assets\Scripts\BlendOps\HierarchyTestBlendScale.cs" />
     <Compile Include="Assets\Scripts\BlendOps\TestBlend.cs" />
     <Compile Include="Assets\Scripts\BlendOps\TestBlendAdd.cs" />
     <Compile Include="Assets\Scripts\BlendOps\TestBlendAverage.cs" />
