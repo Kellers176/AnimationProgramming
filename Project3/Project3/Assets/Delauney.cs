@@ -2,30 +2,33 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Delauney : MonoBehaviour
+public class Delauney : Hierarchy
 {
     // Start is called before the first frame update
 
     //differnet poses
-    public Hierarchy pose1;
-    public Hierarchy pose2;
-    public Hierarchy pose3;
+    public HierarchyBlendScale pose1;
+    public HierarchyBlendScale pose2;
+    public HierarchyBlendScale pose3;
 
     //point of the graph
     public Transform currentGraphPoint;
-
+    Pose tempPos1;
+    Pose tempPos2;
+    Pose tempPos3;
 
     float alpha, beta, gamma;
 
     void Start()
     {
-        
+        tempPos1 = new Pose();
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        TriangularLerp(currentGraphPoint.position.x, currentGraphPoint.position.y, currentGraphPoint.position.z);
     }
 
     /// <summary>
@@ -65,7 +68,10 @@ public class Delauney : MonoBehaviour
         beta = calculateDistance(pose2.transform,currentGraphPoint.transform);
         gamma = calculateDistance(pose3.transform,currentGraphPoint.transform);
 
-
+        //set the parameter
+        pose1.GetComponent<HierarchyBlendScale>().setParameter(alpha);
+        pose2.GetComponent<HierarchyBlendScale>().setParameter(beta);
+        pose3.GetComponent<HierarchyBlendScale>().setParameter(gamma);
         //theoretically this would work
         //we need to scale our poses with the corresponding parameters.
         //we need to set each of these to its own corresponding pose so that we can add them later
@@ -73,14 +79,11 @@ public class Delauney : MonoBehaviour
 
         //TODO: These need to be set to a pose!
         //these need to be set!
-        pose1.GetComponent<HierarchyBlendScale>().setParameter(alpha);
-        pose1.GetComponent<HierarchyBlendScale>().Scale();
-
-        pose2.GetComponent<HierarchyBlendScale>().setParameter(beta);
-        pose2.GetComponent<HierarchyBlendScale>().Scale();
-
-        pose3.GetComponent<HierarchyBlendScale>().setParameter(gamma);
-        pose3.GetComponent<HierarchyBlendScale>().Scale();
+//       tempPos1.skeletonHierarchy.Add(pose1.GetComponent<HierarchyBlendScale>().Scale());
+//
+//       tempPos2.skeletonHierarchy.Add(pose2.GetComponent<HierarchyBlendScale>().Scale());
+//
+//       tempPos3.skeletonHierarchy.Add(pose3.GetComponent<HierarchyBlendScale>().Scale());
 
 
     }

@@ -36,7 +36,7 @@ public class Hierarchy : MonoBehaviour
         rootNode = this.gameObject.transform;
     }
 
-    protected void SetPoseResult(BetterTransform newTrans, int downHierchary)
+    protected Transform SetPoseResult(BetterTransform newTrans, int downHierchary)
     {
         Transform temp = rootNode;
 
@@ -61,6 +61,8 @@ public class Hierarchy : MonoBehaviour
 
         else
             temp.localEulerAngles = newTrans.eulerRot;
+
+        return temp;
     }
 
     List<GameObject> GetConnectedNodes(GameObject current)

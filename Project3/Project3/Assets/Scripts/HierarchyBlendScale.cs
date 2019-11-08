@@ -8,6 +8,9 @@ public class HierarchyBlendScale : Hierarchy
 
     BetterTransform passTrans;
 
+    Transform temp;
+
+
     [Range(0, 1)]
     public float parameter;
 
@@ -22,7 +25,7 @@ public class HierarchyBlendScale : Hierarchy
         parameter = param;
     }
 
-    public void Scale()
+    public Transform Scale()
     {
         passTrans.Init();
 
@@ -90,8 +93,10 @@ public class HierarchyBlendScale : Hierarchy
                     passTrans.eulerRot = Vector3.Lerp(node1.localEulerAngles, node2.localEulerAngles, parameter);
                 }
 
-                SetPoseResult(passTrans, j);
+                temp = SetPoseResult(passTrans, j);
+                return temp;
             }
         }
+        return temp;
     }
 }
