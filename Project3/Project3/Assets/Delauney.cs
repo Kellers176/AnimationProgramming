@@ -2,33 +2,42 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Delauney : Hierarchy
+public class Delauney : TestBlend
 {
     // Start is called before the first frame update
 
+    public GameObject gameManager;
+
+
     //differnet poses
-    public HierarchyBlendScale pose1;
-    public HierarchyBlendScale pose2;
-    public HierarchyBlendScale pose3;
+    public TestBlendScale pose1;
+    public TestBlendScale pose2;
+    public TestBlendScale pose3;
+
 
     //point of the graph
-    public Transform currentGraphPoint;
-    Pose tempPos1;
-    Pose tempPos2;
-    Pose tempPos3;
+    public Vector2 currentGraphPoint;
+    public Vector2 Pose1GraphTransform;
+    public Vector2 Pose2GraphTransform;
+    public Vector2 Pose3GraphTransform;
+
+
+    Transform tempScalePos1;
+    Transform tempScalePos2;
+    Transform tempScalePos3;
+
+    Transform tempAddPose1;
+    Transform tempAddPose2;
+
+    Transform finalPose;
 
     float alpha, beta, gamma;
 
-    void Start()
-    {
-        tempPos1 = new Pose();
-
-    }
 
     // Update is called once per frame
     void Update()
     {
-        TriangularLerp(currentGraphPoint.position.x, currentGraphPoint.position.y, currentGraphPoint.position.z);
+        TriangularLerp();
     }
 
     /// <summary>
@@ -36,7 +45,7 @@ public class Delauney : Hierarchy
     /// </summary>
     /// <param name="other"></param>
     /// <returns></returns>
-    public float calculateDistance(Transform other, Transform centerPos)
+    public float calculateDistance(Vector2 other, Vector2 centerPos)
     {   //          B1
         //          *
         //        / |-A\
@@ -45,11 +54,11 @@ public class Delauney : Hierarchy
         //     / G-/  \ -B\    
         //    B3----------B2
         //
-        float distance = Vector3.Distance(other.position, centerPos.position);
+        float distance = Vector3.Distance(other, centerPos);
         return distance;
     }
 
-    void TriangularLerp(float a, float b, float g)
+    void TriangularLerp()
     {
         //                ---------------------
         //  pose1 -----> |  SCALE (with Alpha) |    \
@@ -64,31 +73,47 @@ public class Delauney : Hierarchy
         //                ---------------------
 
         //set our beta, alpha, and gamma
-        alpha = calculateDistance(pose1.transform,currentGraphPoint.transform);
-        beta = calculateDistance(pose2.transform,currentGraphPoint.transform);
-        gamma = calculateDistance(pose3.transform,currentGraphPoint.transform);
+        alpha = calculateDistance(Pose1GraphTransform, currentGraphPoint);
+        beta = calculateDistance(Pose2GraphTransform, currentGraphPoint);
+        gamma = calculateDistance(Pose3GraphTransform, currentGraphPoint);
 
         //set the parameter
-        pose1.GetComponent<HierarchyBlendScale>().setParameter(alpha);
-        pose2.GetComponent<HierarchyBlendScale>().setParameter(beta);
-        pose3.GetComponent<HierarchyBlendScale>().setParameter(gamma);
-        //theoretically this would work
-        //we need to scale our poses with the corresponding parameters.
-        //we need to set each of these to its own corresponding pose so that we can add them later
-        // once each of these is scaled, we will add them to each other and get our prime result
+        pose1.setParameter(alpha);
+        pose2.setParameter(beta);
+        pose3.setParameter(gamma);
 
-        //TODO: These need to be set to a pose!
-        //these need to be set!
-//       tempPos1.skeletonHierarchy.Add(pose1.GetComponent<HierarchyBlendScale>().Scale());
-//
-//       tempPos2.skeletonHierarchy.Add(pose2.GetComponent<HierarchyBlendScale>().Scale());
-//
-//       tempPos3.skeletonHierarchy.Add(pose3.GetComponent<HierarchyBlendScale>().Scale());
+        //scale each pose
+        tempScalePos1 = pose1.Scale(pose1.transform);
+        tempScalePos2 = pose2.Scale(pose2.transform);
+        tempScalePos3 = pose3.Scale(pose3.transform);
 
+        tempAddPose1 = gameManager.GetComponent<TestBlendAdd>().Add(tempScalePos1, tempScalePos2);
+
+        finalPose = gameManager.GetComponent<TestBlendAdd>().Add(tempAddPose1, tempScalePos3);
+
+        this.transform.position = finalPose.transform.position;
+        this.transform.rotation = finalPose.transform.rotation;
+        this.transform.localScale = finalPose.transform.localScale;
 
     }
 
+    public void setPose1Transform(Vector2 pos)
+    {
+        Pose1GraphTransform = pos;
+    }
+    public void setPose2Transform(Vector2 pos)
+    {
+        Pose2GraphTransform = pos;
+    }
+    public void setPose3Transform(Vector2 pos)
+    {
+        Pose3GraphTransform = pos;
+    }
 
+    public void setCurrentGraphPoint(Vector2 pos)
+    {
+        currentGraphPoint = pos;
+    }
 
 
 }
