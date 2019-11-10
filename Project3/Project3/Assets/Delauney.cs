@@ -14,7 +14,9 @@ public class Delauney : TestBlend
     public TestBlendScale pose2;
     public TestBlendScale pose3;
 
-
+    public Transform deltapose1;
+    public Transform deltapose2;
+    public Transform deltapose3;
     //point of the graph
     public Vector2 currentGraphPoint;
     public Vector2 Pose1GraphTransform;
@@ -83,9 +85,9 @@ public class Delauney : TestBlend
         pose3.setParameter(gamma);
 
         //scale each pose
-        tempScalePos1 = pose1.Scale(pose1.transform);
-        tempScalePos2 = pose2.Scale(pose2.transform);
-        tempScalePos3 = pose3.Scale(pose3.transform);
+        tempScalePos1 = pose1.Scale(deltapose1.transform);
+        tempScalePos2 = pose2.Scale(deltapose2.transform);
+        tempScalePos3 = pose3.Scale(deltapose3.transform);
 
         tempAddPose1 = gameManager.GetComponent<TestBlendAdd>().Add(tempScalePos1, tempScalePos2);
 

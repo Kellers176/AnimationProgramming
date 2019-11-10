@@ -7,22 +7,28 @@ using UnityEditor;
 
 public class GraphWindowEditor : EditorWindow
 {
-    string myString = "Hello World";
-    bool groupEnabled;
-    bool myBool = true;
-    float myFloat = 1.23f;
+    //Serialize all the fields that need to be saved
+    [SerializeField]
+    GameObject dScriptHolder;
 
+    [SerializeField]
     Vector2 mousePos = Vector2.zero;
+
+    [SerializeField]
+    List<Vector2> delauneyPositions;
+
+    //All other vars
     Vector2 oldMousePos = Vector2.zero;
     Vector2 gridLimits = new Vector2(400, 400);
 
-    //Anim
-    int maxFrames = 64;
-    int timeStep = 20;
-    int currFrame = 0;
+    GUIContent windowTitleContent;
+    GUILayoutOption[] tempLayout;
 
-    // Add menu item named "My Window" to the Window menu
-    [MenuItem("Window/Sick Ass Blend Tree")]
+    Texture dotIcon;
+    Texture delauneyDotIcon;
+
+    // Add menu item to Window tab
+    [MenuItem("Window/Delauney Blend Editor")]
     public static void ShowWindow()
     {
         //Show existing window instance. If one doesn't exist, make one.
@@ -32,68 +38,65 @@ public class GraphWindowEditor : EditorWindow
     void OnGUI()
     {
         oldMousePos = mousePos;
-        
-        //Create the window header
-        Texture icon = AssetDatabase.LoadAssetAtPath<Texture>("Assets/Sprites/God.png");
-        GUIContent titleContent = new GUIContent("God Among Mortals", icon);
-        this.titleContent = titleContent;
-        
-        //Placed dot icon
-        Texture dotIcon = AssetDatabase.LoadAssetAtPath<Texture>("Assets/Sprites/Dot.png");
-        
-        //Set up Content
-        GUIContent tempContent = new GUIContent();
-        tempContent.image = icon;
-        tempContent.text = "Mouse Position ";
-        
-        //Set up layouts
-        GUILayoutOption[] tempLayout;
-        tempLayout = new GUILayoutOption[]
-        {
-            GUILayout.Width(120),
-            GUILayout.Height(40)
-        };
-        
+
         //DrawGrid
         gridLimits = new Vector2(400, 400);
         Texture gridTexture = AssetDatabase.LoadAssetAtPath<Texture>("Assets/Sprites/Grid.jpg");
-        float widthPosition = EditorGUIUtility.currentViewWidth / 2 - (EditorGUIUtility.currentViewWidth / 4);
         //https://forum.unity.com/threads/editorguilayout-get-width-of-inspector-window-area.82068/
         GUI.DrawTexture(new Rect(0, 0, gridLimits.x, gridLimits.y), gridTexture, ScaleMode.ScaleToFit);
-        
-        //Add space
+
+        //Add space to position text under grid
         GUILayout.Space(gridLimits.y);
-        
+
         GUILayout.Label("Base Settings", EditorStyles.boldLabel);
-        myString = EditorGUILayout.TextField("Text Field", myString);
-        
-        mousePos = EditorGUILayout.Vector2Field(tempContent, mousePos, tempLayout);
-        
-        groupEnabled = EditorGUILayout.BeginToggleGroup("Optional Settings", groupEnabled);
-        myBool = EditorGUILayout.Toggle("Toggle", myBool);
-        myFloat = EditorGUILayout.Slider("Slider", myFloat, -3, 3);
-        EditorGUILayout.EndToggleGroup();        
-        
+
+        mousePos = EditorGUILayout.Vector2Field("Mouse Position: ", mousePos, tempLayout);
+
+        //Get the Delauney script object
+        dScriptHolder = EditorGUILayout.ObjectField("Delauney Script Holder", dScriptHolder, typeof(GameObject), true) as GameObject;
+
+        GUILayout.Label("Nodes (Middle Click on Graph to Clear)", EditorStyles.boldLabel);
+
+        for (int i = 0; i < delauneyPositions.Count; i++)
+        {
+            delauneyPositions[i] = EditorGUILayout.Vector2Field("Node Position " + (i + 1) + ": ", delauneyPositions[i], tempLayout);
+        }
+
         //Get mouse click
         Event e = Event.current;
         if (e.mousePosition.x > 0 && e.mousePosition.y > 0 && e.mousePosition.x < gridLimits.x && e.mousePosition.y < gridLimits.y)
         {
             if (e.type == EventType.MouseDown)
             {
-                Debug.Log("Mouse down at " + e.mousePosition);
-                //GUI.DrawTexture(new Rect(e.mousePosition.x, e.mousePosition.y, 100, 100), dotIcon, ScaleMode.ScaleToFit);
-                mousePos = e.mousePosition / gridLimits.x;
+                if (e.button == 0)
+                {
+                    //Debug.Log("Mouse down at " + e.mousePosition);
+                    mousePos = e.mousePosition / gridLimits.x;
+                }
+                else if (e.button == 1)
+                {
+                    if (delauneyPositions.Count < 3)
+                    {
+                        //Add Delauney node
+                        delauneyPositions.Add(e.mousePosition / gridLimits.x);
+                    }
+                }
+                else if (e.button == 2)
+                {
+                    delauneyPositions.Clear();
+                }
             }
-        
+
             else if (e.type == EventType.MouseDrag)
             {
-                Debug.Log("Mouse drag at " + e.mousePosition);
-        
-                //mousePos = e.mousePosition;
-                mousePos = e.mousePosition / gridLimits.x;
+                if (e.button == 0)
+                {
+                    //Debug.Log("Mouse drag at " + e.mousePosition);
+                    mousePos = e.mousePosition / gridLimits.x;
+                }
             }
         }
-        
+
         if (oldMousePos != mousePos)
         {
             if (mousePos.x < 0)
@@ -106,41 +109,86 @@ public class GraphWindowEditor : EditorWindow
             else if (mousePos.y > 1)
                 mousePos.y = 1;
 
-            oldMousePos = mousePos;
-        }
-        
-        GUI.DrawTexture(new Rect((oldMousePos.x) * gridLimits.x - 5, (oldMousePos.y) * gridLimits.x - 5, 10, 10), dotIcon, ScaleMode.ScaleToFit);
-        Repaint();
+            oldMousePos = mousePos;            
 
-        ////Anim
-        //string tempName = "Assets/Sprites/Anim/frame_";
-        //if (currFrame < 10)
-        //    tempName += "0" + currFrame;
-        //else
-        //    tempName += currFrame;
-        //
-        //tempName += "_delay-0.1s.gif";
-        //
-        //Debug.Log(tempName);
-        //
-        //Texture animFrame = AssetDatabase.LoadAssetAtPath<Texture>(tempName);
-        //
-        ////GUILayout.Box(icon);
-        //GUI.DrawTexture(new Rect(0, 00, 400, 400), animFrame, ScaleMode.ScaleAndCrop);
-        //
-        //currFrame++;
-        //if (currFrame > maxFrames)
-        //    currFrame = 0;
+            //Stuff changed so repaint
+            Repaint();
+        }
+
+        for (int i = 0; i < delauneyPositions.Count; i++)
+        {
+            float newX = delauneyPositions[i].x;
+            float newY = delauneyPositions[i].y;
+
+            if (newX < 0)
+                newX = 0;
+            else if (newX > 1)
+                newX = 1;
+
+            if (newY < 0)
+                newY = 0;
+            else if (newY > 1)
+                newY = 1;
+
+            delauneyPositions[i] = new Vector2(newX, newY);
+        }
+
+        GUI.DrawTexture(new Rect((oldMousePos.x) * gridLimits.x - 5, (oldMousePos.y) * gridLimits.x - 5, 10, 10), dotIcon, ScaleMode.ScaleToFit);
+
+        for (int i = 0; i < delauneyPositions.Count; i++)
+        {
+            GUI.DrawTexture(new Rect((delauneyPositions[i].x) * gridLimits.x - 5, (delauneyPositions[i].y) * gridLimits.x - 5, 10, 10), delauneyDotIcon, ScaleMode.ScaleToFit);
+        }
+
+        //Pass data
+        if (delauneyPositions.Count == 3)
+        {
+            Debug.Log(dScriptHolder.gameObject.name);
+            Delauney passScript = dScriptHolder.gameObject.GetComponent<Delauney>();
+
+            passScript.setCurrentGraphPoint(oldMousePos);
+
+            passScript.setPose1Transform(delauneyPositions[0]);
+            passScript.setPose2Transform(delauneyPositions[1]);
+            passScript.setPose3Transform(delauneyPositions[2]);
+        }
     }
 
-    void Update()
+
+    //Saving data is from this:
+    //https://answers.unity.com/questions/119978/how-do-i-have-an-editorwindow-save-its-data-inbetw.html
+    protected void OnEnable()
     {
-        ////Anim
-        //timeStep--;
-        //if (timeStep < 0)
-        //{
-        //    timeStep = 20;
-        //    Repaint();
-        //}
+        //Load objects
+        //Create the window header
+        windowTitleContent = new GUIContent("Delauney Blend Graph");
+        this.titleContent = windowTitleContent;
+
+        //Placed dot icon
+        dotIcon = AssetDatabase.LoadAssetAtPath<Texture>("Assets/Sprites/Dot.png");
+        delauneyDotIcon = AssetDatabase.LoadAssetAtPath<Texture>("Assets/Sprites/DelauneyDot.png");
+
+        //Set up layouts
+        tempLayout = new GUILayoutOption[]
+        {
+            GUILayout.Width(120),
+            GUILayout.Height(40)
+        };
+
+        //Save data
+        // Here we retrieve the data if it exists or we save the default field initialisers we set above
+        var data = EditorPrefs.GetString("Delauney Blend Graph", JsonUtility.ToJson(this, false));
+        // Then we apply them to this window
+        JsonUtility.FromJsonOverwrite(data, this);
+    }
+
+    protected void OnDisable()
+    {
+        // We get the Json data
+        var data = JsonUtility.ToJson(this, false);
+        // And we save it
+        EditorPrefs.SetString("Delauney Blend Graph", data);
+
+        // Et voilà !
     }
 }
