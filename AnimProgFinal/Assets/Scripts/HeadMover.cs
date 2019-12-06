@@ -36,40 +36,24 @@ public class HeadMover : MonoBehaviour
         neckObj.transform.LookAt(LookAtObject.transform.position);
 
         Vector3 correctedEulers = neckObj.transform.localEulerAngles;
-
+        correctedEulers.x -= 90;
+        
+        if (correctedEulers.x < 0)
+            correctedEulers.x += 360;
+        
         //Correct Limits
-        if (neckObj.transform.localEulerAngles.x > NeckYawLimit)
+        if (correctedEulers.x > NeckYawLimit)
         {
-            if (neckObj.transform.localEulerAngles.x > 180)
+            if (correctedEulers.x > 180)
             {
-                if (neckObj.transform.localEulerAngles.x < 360 - NeckYawLimit)
+                if (correctedEulers.x < 360 - NeckYawLimit)
                     correctedEulers.x = 360 - NeckYawLimit;
             }
             else
                 correctedEulers.x = NeckYawLimit;
         }
-
-        if (neckObj.transform.localEulerAngles.y > NeckTiltLimit)
-        {
-            if (neckObj.transform.localEulerAngles.y > 180)
-            {
-                if (neckObj.transform.localEulerAngles.y < 360 - NeckTiltLimit)
-                    correctedEulers.y = 360 - NeckTiltLimit;
-            }
-            else
-                correctedEulers.y = NeckTiltLimit;
-        }
-
-        if (neckObj.transform.localEulerAngles.z > NeckRotLimit)
-        {
-            if (neckObj.transform.localEulerAngles.z > 180)
-            {
-                if (neckObj.transform.localEulerAngles.z < 360 - NeckRotLimit)
-                    correctedEulers.z = 360 - NeckRotLimit;
-            }
-            else
-                correctedEulers.z = NeckRotLimit;
-        }
+        
+        correctedEulers.x  += 90;
 
         //Re-assign
         neckObj.transform.localEulerAngles = correctedEulers;
