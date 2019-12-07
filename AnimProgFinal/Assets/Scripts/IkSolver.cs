@@ -105,7 +105,7 @@ public class IkSolver : MonoBehaviour
 
         length1 = bone1.transform.localScale.y;
         length2 = bone2.transform.localScale.y;
-        chainLength = 5;
+        chainLength = 2;
     }
 
     // Update is called once per frame
@@ -152,6 +152,9 @@ public class IkSolver : MonoBehaviour
             //calculate final location
             finalPosition = basePosition + (distance * normalizedDisplacement) + (height * normalizedHeight);
 
+            Vector3 changedPos = finalPosition - tochange.position;
+            endEffector.position -= changedPos;
+
             tochange.position = finalPosition;
             //===========================================
             //Solve for Orientations!
@@ -160,11 +163,6 @@ public class IkSolver : MonoBehaviour
 
 
         }
-
-        
-
-
-
 
 
 
