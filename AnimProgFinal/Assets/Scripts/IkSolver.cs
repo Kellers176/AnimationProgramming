@@ -170,8 +170,8 @@ public class IkSolver : MonoBehaviour
 
             //baseEffector.localEulerAngles = new Vector3(-theta + 90, 0, 0);
             //tochange.localEulerAngles = new Vector3(theta + 90, 0, 0);
-            bone2.transform.LookAt(tochange.position);
         }
+            bone2.transform.LookAt(tochange.position);
 
 
 
