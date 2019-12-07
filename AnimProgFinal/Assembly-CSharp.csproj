@@ -62,6 +62,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Inverse Kinematics\Scripts\InverseKinematics.cs" />
+    <Compile Include="Assets\Procedural.cs" />
+    <Compile Include="Assets\RootManager.cs" />
     <Compile Include="Assets\Scripts\ArmAimer.cs" />
     <Compile Include="Assets\Scripts\HeadMover.cs" />
     <Compile Include="Assets\Scripts\IkSolver.cs" />
