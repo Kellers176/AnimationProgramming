@@ -12,6 +12,7 @@ public class IkSolver : MonoBehaviour
     public Transform poleVector;
 
     public Transform tochange;
+    public Transform endOfBox;
 
     public GameObject bone1;
     public GameObject bone2;
@@ -155,9 +156,19 @@ public class IkSolver : MonoBehaviour
             tochange.position = finalPosition;
             //===========================================
             //Solve for Orientations!
-
-            //Debug.Log(finalPosition.x + " " + finalPosition.y + " " + finalPosition.z);
-
+            Vector3 thirdPoint = new Vector3(tochange.localPosition.x, baseEffector.localPosition.y, 0);
+//            float h = Vector3.Distance(basePosition, tochange.position);
+//            float a = Vector3.Distance(basePosition, thirdPoint);
+//
+//
+//            Debug.Log("hypotenus" + h + "   Adjacent: " + a);
+//
+//            float degree = 1 / Mathf.Cos(a/h);
+//            degree *= Mathf.Rad2Deg;
+//
+//            baseEffector.localEulerAngles = new Vector3(degree +90 , 0, 0);
+//
+//            tochange.localEulerAngles = new Vector3(100, 0, 0);
 
         }
 
