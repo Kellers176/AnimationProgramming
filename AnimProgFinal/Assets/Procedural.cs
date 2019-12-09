@@ -4,14 +4,19 @@ using UnityEngine;
 
 public class Procedural : MonoBehaviour
 {
+    public Procedural otherHip;
+
     public Transform root;
     public Transform home;
     public Transform foot;
     public Transform hip;
     public Transform hipMesh;
 
-    public float overstep =  1.5f;
+    public float overstep =  2f;
+    public float coseEnough =  .5f;
     public float bounds = 2;
+
+    bool isLerp = false;    
 
     Vector3 footPos;
     
@@ -25,24 +30,30 @@ public class Procedural : MonoBehaviour
     void Update()
     {
         hipMesh.LookAt(foot);
-        Vector3 startPosition = this.transform.position;
-        if (Vector3.Distance(foot.position, home.position) > bounds)
+
+        if (isLerp)
         {
-            Vector3 temp = home.position;
-            home.localPosition = new Vector3(home.localPosition.x, home.localPosition.y, home.localPosition.z + overstep);// * Mathf.Sign(temp.z - foot.position.z));
-            
-            footPos = home.position;
-            foot.position = footPos;
-            home.position = temp;
-            //foot.position = Vector3.Lerp(startPosition, footPos, Time.deltaTime);
+            foot.position = Vector3.Lerp(foot.position, footPos, Time.deltaTime * 10);
+
+            if (Vector3.Distance(foot.position, footPos) < coseEnough)
+                isLerp = false;
         }
         else
-            foot.position = footPos;
+        {
+            if (Vector3.Distance(foot.position, home.position) > bounds)
+            {
+                Vector3 temp = home.position;
+                home.localPosition = new Vector3(home.localPosition.x, home.localPosition.y, home.localPosition.z + overstep);// * Mathf.Sign(temp.z - foot.position.z));
 
+                footPos = home.position;
+                //foot.position = footPos;
+                home.position = temp;
 
-
+                if (!otherHip.isLerp)
+                    isLerp = true;
+            }
+            else
+                foot.position = footPos;
+        }
     }
-
-
-
 }
